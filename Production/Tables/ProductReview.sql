@@ -1,25 +1,48 @@
-﻿CREATE TABLE [Production].[ProductReview] (
-    [ProductReviewID] INT             IDENTITY (1, 1) NOT NULL,
-    [ProductID]       INT             NOT NULL,
-    [ReviewerName]    [dbo].[Name]    NOT NULL,
-    [ReviewDate]      DATETIME        CONSTRAINT [DF_ProductReview_ReviewDate] DEFAULT (getdate()) NOT NULL,
-    [EmailAddress]    NVARCHAR (50)   NOT NULL,
-    [Rating]          INT             NOT NULL,
-    [Comments]        NVARCHAR (3850) NULL,
-    [ModifiedDate]    DATETIME        CONSTRAINT [DF_ProductReview_ModifiedDate] DEFAULT (getdate()) NOT NULL,
-    CONSTRAINT [PK_ProductReview_ProductReviewID] PRIMARY KEY CLUSTERED ([ProductReviewID] ASC),
-    CONSTRAINT [CK_ProductReview_Rating] CHECK ([Rating]>=(1) AND [Rating]<=(5)),
-    CONSTRAINT [FK_ProductReview_Product_ProductID] FOREIGN KEY ([ProductID]) REFERENCES [Production].[Product] ([ProductID])
+﻿CREATE TABLE [Production].[ProductReview] 
+(
+  [ProductReviewID] INT             IDENTITY (1, 1) NOT NULL,
+  [ProductID]       INT             NOT NULL,
+  [ReviewerName]    [dbo].[Name]    NOT NULL,
+  [ReviewDate]      DATETIME        CONSTRAINT [DF_ProductReview_ReviewDate] DEFAULT (getdate()) NOT NULL,
+  [EmailAddress]    NVARCHAR (50)   NOT NULL,
+  [Rating]          INT             NOT NULL,
+  [Comments]        NVARCHAR (3850) NULL,
+  [RowStatus]    TINYINT          NOT NULL,
+  [CreatedBy]    UNIQUEIDENTIFIER NOT NULL,
+  [ModifiedBy]   UNIQUEIDENTIFIER NOT NULL,
+  [CreatedDate]  DATETIME         NOT NULL,
+  [ModifiedDate] DATETIME         NOT NULL,
+  [Uuid]         UNIQUEIDENTIFIER NOT NULL ROWGUIDCOL,
+  CONSTRAINT [PK_ProductReview_ProductReviewID] PRIMARY KEY CLUSTERED ([ProductReviewID] ASC),
+  CONSTRAINT [CK_ProductReview_Rating] CHECK ([Rating]>=(1) AND [Rating]<=(5)),
+  CONSTRAINT [FK_ProductReview_Product_ProductID] FOREIGN KEY ([ProductID]) REFERENCES [Production].[Product] ([ProductID])
 );
-
-
 GO
+
+/* Defaults */
+ALTER TABLE [Production].[ProductReview] ADD CONSTRAINT [DF__ProductReview__RowStatus] DEFAULT ((1)) FOR [RowStatus]
+GO
+
+ALTER TABLE [Production].[ProductReview] ADD CONSTRAINT [DF__ProductReview__CreatedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [CreatedBy]
+GO
+
+ALTER TABLE [Production].[ProductReview] ADD CONSTRAINT [DF__ProductReview__ModifiedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [ModifiedBy]
+GO
+
+ALTER TABLE [Production].[ProductReview] ADD CONSTRAINT [DF__ProductReview__CreatedDate] DEFAULT (GETUTCDATE()) FOR [CreatedDate]
+GO
+
+ALTER TABLE [Production].[ProductReview] ADD CONSTRAINT [DF__ProductReview__ModifiedDate] DEFAULT (GETUTCDATE()) FOR [ModifiedDate]
+GO
+
+ALTER TABLE [Production].[ProductReview] ADD CONSTRAINT [DF__ProductReview__Uuid] DEFAULT (NEWID()) FOR [Uuid]
+GO
+
 CREATE NONCLUSTERED INDEX [IX_ProductReview_ProductID_Name]
     ON [Production].[ProductReview]([ProductID] ASC, [ReviewerName] ASC)
     INCLUDE([Comments]);
-
-
 GO
+
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Nonclustered index.', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'ProductReview', @level2type = N'INDEX', @level2name = N'IX_ProductReview_ProductID_Name';
 
 
@@ -32,7 +55,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default con
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'ProductReview', @level2type = N'CONSTRAINT', @level2name = N'DF_ProductReview_ModifiedDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'ProductReview', @level2type = N'CONSTRAINT', @level2name = N'DF__ProductReview__ModifiedDate';
 
 
 GO

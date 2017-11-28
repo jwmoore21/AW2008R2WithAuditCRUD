@@ -1,26 +1,47 @@
-﻿CREATE TABLE [Sales].[Store] (
-    [BusinessEntityID] INT                                                NOT NULL,
-    [Name]             [dbo].[Name]                                       NOT NULL,
-    [SalesPersonID]    INT                                                NULL,
-    [Demographics]     XML(CONTENT [Sales].[StoreSurveySchemaCollection]) NULL,
-    [rowguid]          UNIQUEIDENTIFIER                                   CONSTRAINT [DF_Store_rowguid] DEFAULT (newid()) ROWGUIDCOL NOT NULL,
-    [ModifiedDate]     DATETIME                                           CONSTRAINT [DF_Store_ModifiedDate] DEFAULT (getdate()) NOT NULL,
-    CONSTRAINT [PK_Store_BusinessEntityID] PRIMARY KEY CLUSTERED ([BusinessEntityID] ASC),
-    CONSTRAINT [FK_Store_BusinessEntity_BusinessEntityID] FOREIGN KEY ([BusinessEntityID]) REFERENCES [Person].[BusinessEntity] ([BusinessEntityID]),
-    CONSTRAINT [FK_Store_SalesPerson_SalesPersonID] FOREIGN KEY ([SalesPersonID]) REFERENCES [Sales].[SalesPerson] ([BusinessEntityID])
+﻿CREATE TABLE [Sales].[Store] 
+(
+  [BusinessEntityID] INT                                                NOT NULL,
+  [Name]             [dbo].[Name]                                       NOT NULL,
+  [SalesPersonID]    INT                                                NULL,
+  [Demographics]     XML(CONTENT [Sales].[StoreSurveySchemaCollection]) NULL,
+  [rowguid]          UNIQUEIDENTIFIER                                   CONSTRAINT [DF_Store_rowguid] DEFAULT (NEWID()) ROWGUIDCOL NOT NULL,
+  [RowStatus]    TINYINT          NOT NULL,
+  [CreatedBy]    UNIQUEIDENTIFIER NOT NULL,
+  [ModifiedBy]   UNIQUEIDENTIFIER NOT NULL,
+  [CreatedDate]  DATETIME         NOT NULL,
+  [ModifiedDate] DATETIME         NOT NULL,
+  [Uuid]         UNIQUEIDENTIFIER NOT NULL,
+  CONSTRAINT [PK_Store_BusinessEntityID] PRIMARY KEY CLUSTERED ([BusinessEntityID] ASC),
+  CONSTRAINT [FK_Store_BusinessEntity_BusinessEntityID] FOREIGN KEY ([BusinessEntityID]) REFERENCES [Person].[BusinessEntity] ([BusinessEntityID]),
+  CONSTRAINT [FK_Store_SalesPerson_SalesPersonID] FOREIGN KEY ([SalesPersonID]) REFERENCES [Sales].[SalesPerson] ([BusinessEntityID])
 );
-
-
 GO
+
+/* Defaults */
+ALTER TABLE [Sales].[Store] ADD CONSTRAINT [DF__Store__RowStatus] DEFAULT ((1)) FOR [RowStatus]
+GO
+
+ALTER TABLE [Sales].[Store] ADD CONSTRAINT [DF__Store__CreatedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [CreatedBy]
+GO
+
+ALTER TABLE [Sales].[Store] ADD CONSTRAINT [DF__Store__ModifiedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [ModifiedBy]
+GO
+
+ALTER TABLE [Sales].[Store] ADD CONSTRAINT [DF__Store__CreatedDate] DEFAULT (GETUTCDATE()) FOR [CreatedDate]
+GO
+
+ALTER TABLE [Sales].[Store] ADD CONSTRAINT [DF__Store__ModifiedDate] DEFAULT (GETUTCDATE()) FOR [ModifiedDate]
+GO
+
+ALTER TABLE [Sales].[Store] ADD CONSTRAINT [DF__Store__Uuid] DEFAULT (NEWID()) FOR [Uuid]
+GO
+
 CREATE NONCLUSTERED INDEX [IX_Store_SalesPersonID]
     ON [Sales].[Store]([SalesPersonID] ASC);
-
-
 GO
+
 CREATE UNIQUE NONCLUSTERED INDEX [AK_Store_rowguid]
     ON [Sales].[Store]([rowguid] ASC);
-
-
 GO
 CREATE PRIMARY XML INDEX [PXML_Store_Demographics]
     ON [Sales].[Store]([Demographics])
@@ -40,7 +61,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Unique nonc
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'Sales', @level1type = N'TABLE', @level1name = N'Store', @level2type = N'CONSTRAINT', @level2name = N'DF_Store_ModifiedDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'Sales', @level1type = N'TABLE', @level1name = N'Store', @level2type = N'CONSTRAINT', @level2name = N'DF__Store__ModifiedDate';
 
 
 GO

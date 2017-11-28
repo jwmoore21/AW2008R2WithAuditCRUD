@@ -1,29 +1,51 @@
-﻿CREATE TABLE [Production].[TransactionHistoryArchive] (
-    [TransactionID]        INT       NOT NULL,
-    [ProductID]            INT       NOT NULL,
-    [ReferenceOrderID]     INT       NOT NULL,
-    [ReferenceOrderLineID] INT       CONSTRAINT [DF_TransactionHistoryArchive_ReferenceOrderLineID] DEFAULT ((0)) NOT NULL,
-    [TransactionDate]      DATETIME  CONSTRAINT [DF_TransactionHistoryArchive_TransactionDate] DEFAULT (getdate()) NOT NULL,
-    [TransactionType]      NCHAR (1) NOT NULL,
-    [Quantity]             INT       NOT NULL,
-    [ActualCost]           MONEY     NOT NULL,
-    [ModifiedDate]         DATETIME  CONSTRAINT [DF_TransactionHistoryArchive_ModifiedDate] DEFAULT (getdate()) NOT NULL,
-    CONSTRAINT [PK_TransactionHistoryArchive_TransactionID] PRIMARY KEY CLUSTERED ([TransactionID] ASC),
-    CONSTRAINT [CK_TransactionHistoryArchive_TransactionType] CHECK (upper([TransactionType])='P' OR upper([TransactionType])='S' OR upper([TransactionType])='W')
+﻿CREATE TABLE [Production].[TransactionHistoryArchive] 
+(
+  [TransactionID]        INT       NOT NULL,
+  [ProductID]            INT       NOT NULL,
+  [ReferenceOrderID]     INT       NOT NULL,
+  [ReferenceOrderLineID] INT       CONSTRAINT [DF_TransactionHistoryArchive_ReferenceOrderLineID] DEFAULT ((0)) NOT NULL,
+  [TransactionDate]      DATETIME  CONSTRAINT [DF_TransactionHistoryArchive_TransactionDate] DEFAULT (getdate()) NOT NULL,
+  [TransactionType]      NCHAR (1) NOT NULL,
+  [Quantity]             INT       NOT NULL,
+  [ActualCost]           MONEY     NOT NULL,
+  [RowStatus]    TINYINT          NOT NULL,
+  [CreatedBy]    UNIQUEIDENTIFIER NOT NULL,
+  [ModifiedBy]   UNIQUEIDENTIFIER NOT NULL,
+  [CreatedDate]  DATETIME         NOT NULL,
+  [ModifiedDate] DATETIME         NOT NULL,
+  [Uuid]         UNIQUEIDENTIFIER NOT NULL ROWGUIDCOL,
+  CONSTRAINT [PK_TransactionHistoryArchive_TransactionID] PRIMARY KEY CLUSTERED ([TransactionID] ASC),
+  CONSTRAINT [CK_TransactionHistoryArchive_TransactionType] CHECK (upper([TransactionType])='P' OR upper([TransactionType])='S' OR upper([TransactionType])='W')
 );
-
-
 GO
+
+/* Defaults */
+ALTER TABLE [Production].[TransactionHistoryArchive] ADD CONSTRAINT [DF__TransactionHistoryArchive__RowStatus] DEFAULT ((1)) FOR [RowStatus]
+GO
+
+ALTER TABLE [Production].[TransactionHistoryArchive] ADD CONSTRAINT [DF__TransactionHistoryArchive__CreatedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [CreatedBy]
+GO
+
+ALTER TABLE [Production].[TransactionHistoryArchive] ADD CONSTRAINT [DF__TransactionHistoryArchive__ModifiedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [ModifiedBy]
+GO
+
+ALTER TABLE [Production].[TransactionHistoryArchive] ADD CONSTRAINT [DF__TransactionHistoryArchive__CreatedDate] DEFAULT (GETUTCDATE()) FOR [CreatedDate]
+GO
+
+ALTER TABLE [Production].[TransactionHistoryArchive] ADD CONSTRAINT [DF__TransactionHistoryArchive__ModifiedDate] DEFAULT (GETUTCDATE()) FOR [ModifiedDate]
+GO
+
+ALTER TABLE [Production].[TransactionHistoryArchive] ADD CONSTRAINT [DF__TransactionHistoryArchive__Uuid] DEFAULT (NEWID()) FOR [Uuid]
+GO
+
 CREATE NONCLUSTERED INDEX [IX_TransactionHistoryArchive_ReferenceOrderID_ReferenceOrderLineID]
     ON [Production].[TransactionHistoryArchive]([ReferenceOrderID] ASC, [ReferenceOrderLineID] ASC);
-
-
 GO
+
 CREATE NONCLUSTERED INDEX [IX_TransactionHistoryArchive_ProductID]
     ON [Production].[TransactionHistoryArchive]([ProductID] ASC);
-
-
 GO
+
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Nonclustered index.', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'TransactionHistoryArchive', @level2type = N'INDEX', @level2name = N'IX_TransactionHistoryArchive_ReferenceOrderID_ReferenceOrderLineID';
 
 
@@ -40,7 +62,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default con
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'TransactionHistoryArchive', @level2type = N'CONSTRAINT', @level2name = N'DF_TransactionHistoryArchive_ModifiedDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'TransactionHistoryArchive', @level2type = N'CONSTRAINT', @level2name = N'DF__TransactionHistoryArchive__ModifiedDate';
 
 
 GO

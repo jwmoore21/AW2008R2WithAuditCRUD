@@ -1,50 +1,67 @@
-﻿CREATE TABLE [Person].[StateProvince] (
-    [StateProvinceID]         INT              IDENTITY (1, 1) NOT NULL,
-    [StateProvinceCode]       NCHAR (3)        NOT NULL,
-    [CountryRegionCode]       NVARCHAR (3)     NOT NULL,
-    [IsOnlyStateProvinceFlag] [dbo].[Flag]     CONSTRAINT [DF_StateProvince_IsOnlyStateProvinceFlag] DEFAULT ((1)) NOT NULL,
-    [Name]                    [dbo].[Name]     NOT NULL,
-    [TerritoryID]             INT              NOT NULL,
-    [rowguid]                 UNIQUEIDENTIFIER CONSTRAINT [DF_StateProvince_rowguid] DEFAULT (newid()) ROWGUIDCOL NOT NULL,
-    [ModifiedDate]            DATETIME         CONSTRAINT [DF_StateProvince_ModifiedDate] DEFAULT (getdate()) NOT NULL,
-    CONSTRAINT [PK_StateProvince_StateProvinceID] PRIMARY KEY CLUSTERED ([StateProvinceID] ASC),
-    CONSTRAINT [FK_StateProvince_CountryRegion_CountryRegionCode] FOREIGN KEY ([CountryRegionCode]) REFERENCES [Person].[CountryRegion] ([CountryRegionCode]),
-    CONSTRAINT [FK_StateProvince_SalesTerritory_TerritoryID] FOREIGN KEY ([TerritoryID]) REFERENCES [Sales].[SalesTerritory] ([TerritoryID])
+﻿CREATE TABLE [Person].[StateProvince] 
+(
+  [StateProvinceID]         INT              IDENTITY (1, 1) NOT NULL,
+  [StateProvinceCode]       NCHAR (3)        NOT NULL,
+  [CountryRegionCode]       NVARCHAR (3)     NOT NULL,
+  [IsOnlyStateProvinceFlag] [dbo].[Flag]     CONSTRAINT [DF_StateProvince_IsOnlyStateProvinceFlag] DEFAULT ((1)) NOT NULL,
+  [Name]                    [dbo].[Name]     NOT NULL,
+  [TerritoryID]             INT              NOT NULL,
+  [rowguid]                 UNIQUEIDENTIFIER CONSTRAINT [DF_StateProvince_rowguid] DEFAULT (NEWID()) ROWGUIDCOL NOT NULL,
+  [RowStatus]               TINYINT          NOT NULL,
+  [CreatedBy]               UNIQUEIDENTIFIER NOT NULL,
+  [ModifiedBy]              UNIQUEIDENTIFIER NOT NULL,
+  [CreatedDate]             DATETIME         NOT NULL,
+  [ModifiedDate]            DATETIME         NOT NULL,
+  [Uuid]                    UNIQUEIDENTIFIER NOT NULL,
+  CONSTRAINT [PK_StateProvince_StateProvinceID] PRIMARY KEY CLUSTERED ([StateProvinceID] ASC),
+  CONSTRAINT [FK_StateProvince_CountryRegion_CountryRegionCode] FOREIGN KEY ([CountryRegionCode]) REFERENCES [Person].[CountryRegion] ([CountryRegionCode]),
+  CONSTRAINT [FK_StateProvince_SalesTerritory_TerritoryID] FOREIGN KEY ([TerritoryID]) REFERENCES [Sales].[SalesTerritory] ([TerritoryID])
 );
-
-
 GO
+
+/* Defaults */
+ALTER TABLE [Person].[StateProvince] ADD CONSTRAINT [DF__StateProvince__RowStatus] DEFAULT ((1)) FOR [RowStatus]
+GO
+
+ALTER TABLE [Person].[StateProvince] ADD CONSTRAINT [DF__StateProvince__CreatedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [CreatedBy]
+GO
+
+ALTER TABLE [Person].[StateProvince] ADD CONSTRAINT [DF__StateProvince__ModifiedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [ModifiedBy]
+GO
+
+ALTER TABLE [Person].[StateProvince] ADD CONSTRAINT [DF__StateProvince__CreatedDate] DEFAULT (GETUTCDATE()) FOR [CreatedDate]
+GO
+
+ALTER TABLE [Person].[StateProvince] ADD CONSTRAINT [DF__StateProvince__ModifiedDate] DEFAULT (GETUTCDATE()) FOR [ModifiedDate]
+GO
+
+ALTER TABLE [Person].[StateProvince] ADD CONSTRAINT [DF__StateProvince__Uuid] DEFAULT (NEWID()) FOR [Uuid]
+GO
+
 CREATE UNIQUE NONCLUSTERED INDEX [AK_StateProvince_rowguid]
     ON [Person].[StateProvince]([rowguid] ASC);
-
-
 GO
+
 CREATE UNIQUE NONCLUSTERED INDEX [AK_StateProvince_StateProvinceCode_CountryRegionCode]
     ON [Person].[StateProvince]([StateProvinceCode] ASC, [CountryRegionCode] ASC);
-
-
 GO
+
 CREATE UNIQUE NONCLUSTERED INDEX [AK_StateProvince_Name]
     ON [Person].[StateProvince]([Name] ASC);
-
-
 GO
+
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Unique nonclustered index. Used to support replication samples.', @level0type = N'SCHEMA', @level0name = N'Person', @level1type = N'TABLE', @level1name = N'StateProvince', @level2type = N'INDEX', @level2name = N'AK_StateProvince_rowguid';
-
-
 GO
+
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Unique nonclustered index.', @level0type = N'SCHEMA', @level0name = N'Person', @level1type = N'TABLE', @level1name = N'StateProvince', @level2type = N'INDEX', @level2name = N'AK_StateProvince_StateProvinceCode_CountryRegionCode';
-
-
 GO
+
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Unique nonclustered index.', @level0type = N'SCHEMA', @level0name = N'Person', @level1type = N'TABLE', @level1name = N'StateProvince', @level2type = N'INDEX', @level2name = N'AK_StateProvince_Name';
-
-
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'Person', @level1type = N'TABLE', @level1name = N'StateProvince', @level2type = N'CONSTRAINT', @level2name = N'DF_StateProvince_ModifiedDate';
 
-
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'Person', @level1type = N'TABLE', @level1name = N'StateProvince', @level2type = N'CONSTRAINT', @level2name = N'DF__StateProvince__ModifiedDate';
 GO
+
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of NEWID()', @level0type = N'SCHEMA', @level0name = N'Person', @level1type = N'TABLE', @level1name = N'StateProvince', @level2type = N'CONSTRAINT', @level2name = N'DF_StateProvince_rowguid';
 
 
@@ -98,4 +115,4 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Primary key
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'State and province lookup table.', @level0type = N'SCHEMA', @level0name = N'Person', @level1type = N'TABLE', @level1name = N'StateProvince';
-
+GO

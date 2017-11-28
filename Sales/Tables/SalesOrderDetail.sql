@@ -1,34 +1,59 @@
-﻿CREATE TABLE [Sales].[SalesOrderDetail] (
-    [SalesOrderID]          INT              NOT NULL,
-    [SalesOrderDetailID]    INT              IDENTITY (1, 1) NOT NULL,
-    [CarrierTrackingNumber] NVARCHAR (25)    NULL,
-    [OrderQty]              SMALLINT         NOT NULL,
-    [ProductID]             INT              NOT NULL,
-    [SpecialOfferID]        INT              NOT NULL,
-    [UnitPrice]             MONEY            NOT NULL,
-    [UnitPriceDiscount]     MONEY            CONSTRAINT [DF_SalesOrderDetail_UnitPriceDiscount] DEFAULT ((0.0)) NOT NULL,
-    [LineTotal]             AS               (isnull(([UnitPrice]*((1.0)-[UnitPriceDiscount]))*[OrderQty],(0.0))),
-    [rowguid]               UNIQUEIDENTIFIER CONSTRAINT [DF_SalesOrderDetail_rowguid] DEFAULT (newid()) ROWGUIDCOL NOT NULL,
-    [ModifiedDate]          DATETIME         CONSTRAINT [DF_SalesOrderDetail_ModifiedDate] DEFAULT (getdate()) NOT NULL,
-    CONSTRAINT [PK_SalesOrderDetail_SalesOrderID_SalesOrderDetailID] PRIMARY KEY CLUSTERED ([SalesOrderID] ASC, [SalesOrderDetailID] ASC),
-    CONSTRAINT [CK_SalesOrderDetail_OrderQty] CHECK ([OrderQty]>(0)),
-    CONSTRAINT [CK_SalesOrderDetail_UnitPrice] CHECK ([UnitPrice]>=(0.00)),
-    CONSTRAINT [CK_SalesOrderDetail_UnitPriceDiscount] CHECK ([UnitPriceDiscount]>=(0.00)),
-    CONSTRAINT [FK_SalesOrderDetail_SalesOrderHeader_SalesOrderID] FOREIGN KEY ([SalesOrderID]) REFERENCES [Sales].[SalesOrderHeader] ([SalesOrderID]) ON DELETE CASCADE,
-    CONSTRAINT [FK_SalesOrderDetail_SpecialOfferProduct_SpecialOfferIDProductID] FOREIGN KEY ([SpecialOfferID], [ProductID]) REFERENCES [Sales].[SpecialOfferProduct] ([SpecialOfferID], [ProductID])
+﻿CREATE TABLE [Sales].[SalesOrderDetail] 
+(
+  [SalesOrderID]          INT              NOT NULL,
+  [SalesOrderDetailID]    INT              IDENTITY (1, 1) NOT NULL,
+  [CustomerID]            INT              NULL,
+  [CarrierTrackingNumber] NVARCHAR (25)    NULL,
+  [OrderQty]              SMALLINT         NOT NULL,
+  [ProductID]             INT              NOT NULL,
+  [SpecialOfferID]        INT              NOT NULL,
+  [UnitPrice]             MONEY            NOT NULL,
+  [UnitPriceDiscount]     MONEY            CONSTRAINT [DF_SalesOrderDetail_UnitPriceDiscount] DEFAULT ((0.0)) NOT NULL,
+  [LineTotal]             AS               (isnull(([UnitPrice]*((1.0)-[UnitPriceDiscount]))*[OrderQty],(0.0))),
+  [SubTotal]              MONEY            NULL,
+  [rowguid]               UNIQUEIDENTIFIER CONSTRAINT [DF_SalesOrderDetail_rowguid] DEFAULT (NEWID()) ROWGUIDCOL NOT NULL,
+  [RowStatus]    TINYINT          NOT NULL,
+  [CreatedBy]    UNIQUEIDENTIFIER NOT NULL,
+  [ModifiedBy]   UNIQUEIDENTIFIER NOT NULL,
+  [CreatedDate]  DATETIME         NOT NULL,
+  [ModifiedDate] DATETIME         NOT NULL,
+  [Uuid]         UNIQUEIDENTIFIER NOT NULL,
+  CONSTRAINT [PK_SalesOrderDetail_SalesOrderID_SalesOrderDetailID] PRIMARY KEY CLUSTERED ([SalesOrderID] ASC, [SalesOrderDetailID] ASC),
+  CONSTRAINT [CK_SalesOrderDetail_OrderQty] CHECK ([OrderQty]>(0)),
+  CONSTRAINT [CK_SalesOrderDetail_UnitPrice] CHECK ([UnitPrice]>=(0.00)),
+  CONSTRAINT [CK_SalesOrderDetail_UnitPriceDiscount] CHECK ([UnitPriceDiscount]>=(0.00)),
+
+  CONSTRAINT [FK_SalesOrderDetail_SalesOrderDetail_SalesOrderID] FOREIGN KEY ([SalesOrderID]) REFERENCES [Sales].[SalesOrderHeader] ([SalesOrderID]) ON DELETE CASCADE,
+  
+  CONSTRAINT [FK_SalesOrderDetail_SpecialOfferProduct_SpecialOfferIDProductID] FOREIGN KEY ([SpecialOfferID], [ProductID]) REFERENCES [Sales].[SpecialOfferProduct] ([SpecialOfferID], [ProductID])
 );
-
-
 GO
+
+/* Defaults */
+ALTER TABLE [Sales].[SalesOrderDetail] ADD CONSTRAINT [DF__SalesOrderDetail__RowStatus] DEFAULT ((1)) FOR [RowStatus]
+GO
+
+ALTER TABLE [Sales].[SalesOrderDetail] ADD CONSTRAINT [DF__SalesOrderDetail__CreatedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [CreatedBy]
+GO
+
+ALTER TABLE [Sales].[SalesOrderDetail] ADD CONSTRAINT [DF__SalesOrderDetail__ModifiedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [ModifiedBy]
+GO
+
+ALTER TABLE [Sales].[SalesOrderDetail] ADD CONSTRAINT [DF__SalesOrderDetail__CreatedDate] DEFAULT (GETUTCDATE()) FOR [CreatedDate]
+GO
+
+ALTER TABLE [Sales].[SalesOrderDetail] ADD CONSTRAINT [DF__SalesOrderDetail__ModifiedDate] DEFAULT (GETUTCDATE()) FOR [ModifiedDate]
+GO
+
+ALTER TABLE [Sales].[SalesOrderDetail] ADD CONSTRAINT [DF__SalesOrderDetail__Uuid] DEFAULT (NEWID()) FOR [Uuid]
+GO
+
 CREATE NONCLUSTERED INDEX [IX_SalesOrderDetail_ProductID]
     ON [Sales].[SalesOrderDetail]([ProductID] ASC);
-
-
 GO
+
 CREATE UNIQUE NONCLUSTERED INDEX [AK_SalesOrderDetail_rowguid]
     ON [Sales].[SalesOrderDetail]([rowguid] ASC);
-
-
 GO
 
 CREATE TRIGGER [Sales].[iduSalesOrderDetail] ON [Sales].[SalesOrderDetail] 
@@ -64,8 +89,8 @@ BEGIN
                 ,inserted.[OrderQty]
                 ,inserted.[UnitPrice]
             FROM inserted 
-                INNER JOIN [Sales].[SalesOrderHeader] 
-                ON inserted.[SalesOrderID] = [Sales].[SalesOrderHeader].[SalesOrderID];
+                INNER JOIN [Sales].[SalesOrderDetail] 
+                ON inserted.[SalesOrderID] = [Sales].[SalesOrderDetail].[SalesOrderID];
 
             UPDATE [Person].[Person] 
             SET [Demographics].modify('declare default element namespace 
@@ -73,7 +98,7 @@ BEGIN
                 replace value of (/IndividualSurvey/TotalPurchaseYTD)[1] 
                 with data(/IndividualSurvey/TotalPurchaseYTD)[1] + sql:column ("inserted.LineTotal")') 
             FROM inserted 
-                INNER JOIN [Sales].[SalesOrderHeader] AS SOH
+                INNER JOIN [Sales].[SalesOrderDetail] AS SOH
                 ON inserted.[SalesOrderID] = SOH.[SalesOrderID] 
                 INNER JOIN [Sales].[Customer] AS C
                 ON SOH.[CustomerID] = C.[CustomerID]
@@ -82,12 +107,12 @@ BEGIN
 
         -- Update SubTotal in SalesOrderHeader record. Note that this causes the 
         -- SalesOrderHeader trigger to fire which will update the RevisionNumber.
-        UPDATE [Sales].[SalesOrderHeader]
-        SET [Sales].[SalesOrderHeader].[SubTotal] = 
+        UPDATE [Sales].[SalesOrderDetail]
+        SET [Sales].[SalesOrderDetail].[SubTotal] = 
             (SELECT SUM([Sales].[SalesOrderDetail].[LineTotal])
                 FROM [Sales].[SalesOrderDetail]
-                WHERE [Sales].[SalesOrderHeader].[SalesOrderID] = [Sales].[SalesOrderDetail].[SalesOrderID])
-        WHERE [Sales].[SalesOrderHeader].[SalesOrderID] IN (SELECT inserted.[SalesOrderID] FROM inserted);
+                WHERE [Sales].[SalesOrderDetail].[SalesOrderID] = [Sales].[SalesOrderDetail].[SalesOrderID])
+        WHERE [Sales].[SalesOrderDetail].[SalesOrderID] IN (SELECT inserted.[SalesOrderID] FROM inserted);
 
         UPDATE [Person].[Person] 
         SET [Demographics].modify('declare default element namespace 
@@ -95,10 +120,10 @@ BEGIN
             replace value of (/IndividualSurvey/TotalPurchaseYTD)[1] 
             with data(/IndividualSurvey/TotalPurchaseYTD)[1] - sql:column("deleted.LineTotal")') 
         FROM deleted 
-            INNER JOIN [Sales].[SalesOrderHeader] 
-            ON deleted.[SalesOrderID] = [Sales].[SalesOrderHeader].[SalesOrderID] 
+            INNER JOIN [Sales].[SalesOrderDetail] 
+            ON deleted.[SalesOrderID] = [Sales].[SalesOrderDetail].[SalesOrderID] 
             INNER JOIN [Sales].[Customer]
-            ON [Sales].[Customer].[CustomerID] = [Sales].[SalesOrderHeader].[CustomerID]
+            ON [Sales].[Customer].[CustomerID] = [Sales].[SalesOrderDetail].[CustomerID]
         WHERE [Sales].[Customer].[PersonID] = [Person].[Person].[BusinessEntityID];
     END TRY
     BEGIN CATCH
@@ -139,7 +164,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Check const
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'Sales', @level1type = N'TABLE', @level1name = N'SalesOrderDetail', @level2type = N'CONSTRAINT', @level2name = N'DF_SalesOrderDetail_ModifiedDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'Sales', @level1type = N'TABLE', @level1name = N'SalesOrderDetail', @level2type = N'CONSTRAINT', @level2name = N'DF__SalesOrderDetail__ModifiedDate';
 
 
 GO
@@ -155,7 +180,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Foreign key
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Foreign key constraint referencing SalesOrderHeader.PurchaseOrderID.', @level0type = N'SCHEMA', @level0name = N'Sales', @level1type = N'TABLE', @level1name = N'SalesOrderDetail', @level2type = N'CONSTRAINT', @level2name = N'FK_SalesOrderDetail_SalesOrderHeader_SalesOrderID';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Foreign key constraint referencing SalesOrderHeader.PurchaseOrderID.', @level0type = N'SCHEMA', @level0name = N'Sales', @level1type = N'TABLE', @level1name = N'SalesOrderDetail', @level2type = N'CONSTRAINT', @level2name = N'FK_SalesOrderDetail_SalesOrderDetail_SalesOrderID';
 
 
 GO

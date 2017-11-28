@@ -1,34 +1,55 @@
-﻿CREATE TABLE [Person].[Address] (
-    [AddressID]       INT               IDENTITY (1, 1) NOT FOR REPLICATION NOT NULL,
-    [AddressLine1]    NVARCHAR (60)     NOT NULL,
-    [AddressLine2]    NVARCHAR (60)     NULL,
-    [City]            NVARCHAR (30)     NOT NULL,
-    [StateProvinceID] INT               NOT NULL,
-    [PostalCode]      NVARCHAR (15)     NOT NULL,
-    [SpatialLocation] [sys].[geography] NULL,
-    [rowguid]         UNIQUEIDENTIFIER  CONSTRAINT [DF_Address_rowguid] DEFAULT (newid()) ROWGUIDCOL NOT NULL,
-    [ModifiedDate]    DATETIME          CONSTRAINT [DF_Address_ModifiedDate] DEFAULT (getdate()) NOT NULL,
-    CONSTRAINT [PK_Address_AddressID] PRIMARY KEY CLUSTERED ([AddressID] ASC),
-    CONSTRAINT [FK_Address_StateProvince_StateProvinceID] FOREIGN KEY ([StateProvinceID]) REFERENCES [Person].[StateProvince] ([StateProvinceID])
+﻿CREATE TABLE [Person].[Address] 
+(
+  [AddressID]       INT               IDENTITY (1, 1) NOT FOR REPLICATION NOT NULL,
+  [AddressLine1]    NVARCHAR (60)     NOT NULL,
+  [AddressLine2]    NVARCHAR (60)     NULL,
+  [City]            NVARCHAR (30)     NOT NULL,
+  [StateProvinceID] INT               NOT NULL,
+  [PostalCode]      NVARCHAR (15)     NOT NULL,
+  [SpatialLocation] [sys].[geography] NULL,
+  [rowguid]         UNIQUEIDENTIFIER  CONSTRAINT [DF_Address_rowguid] DEFAULT (NEWID()) ROWGUIDCOL NOT NULL,
+  [RowStatus]       TINYINT          NOT NULL,
+  [CreatedBy]       UNIQUEIDENTIFIER NOT NULL,
+  [ModifiedBy]      UNIQUEIDENTIFIER NOT NULL,
+  [CreatedDate]     DATETIME         NOT NULL,
+  [ModifiedDate]    DATETIME         NOT NULL,
+  [Uuid]            UNIQUEIDENTIFIER NOT NULL,
+  CONSTRAINT [PK_Address_AddressID] PRIMARY KEY CLUSTERED ([AddressID] ASC),
+  CONSTRAINT [FK_Address_StateProvince_StateProvinceID] FOREIGN KEY ([StateProvinceID]) REFERENCES [Person].[StateProvince] ([StateProvinceID])
 );
-
-
 GO
+
+/* Defaults */
+ALTER TABLE [Person].[Address] ADD CONSTRAINT [DF__Address__RowStatus] DEFAULT ((1)) FOR [RowStatus]
+GO
+
+ALTER TABLE [Person].[Address] ADD CONSTRAINT [DF__Address__CreatedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [CreatedBy]
+GO
+
+ALTER TABLE [Person].[Address] ADD CONSTRAINT [DF__Address__ModifiedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [ModifiedBy]
+GO
+
+ALTER TABLE [Person].[Address] ADD CONSTRAINT [DF__Address__CreatedDate] DEFAULT (GETUTCDATE()) FOR [CreatedDate]
+GO
+
+ALTER TABLE [Person].[Address] ADD CONSTRAINT [DF__Address__ModifiedDate] DEFAULT (GETUTCDATE()) FOR [ModifiedDate]
+GO
+
+ALTER TABLE [Person].[Address] ADD CONSTRAINT [DF__Address__Uuid] DEFAULT (NEWID()) FOR [Uuid]
+GO
+
 CREATE NONCLUSTERED INDEX [IX_Address_StateProvinceID]
     ON [Person].[Address]([StateProvinceID] ASC);
-
-
 GO
+
 CREATE UNIQUE NONCLUSTERED INDEX [IX_Address_AddressLine1_AddressLine2_City_StateProvinceID_PostalCode]
     ON [Person].[Address]([AddressLine1] ASC, [AddressLine2] ASC, [City] ASC, [StateProvinceID] ASC, [PostalCode] ASC);
-
-
 GO
+
 CREATE UNIQUE NONCLUSTERED INDEX [AK_Address_rowguid]
     ON [Person].[Address]([rowguid] ASC);
-
-
 GO
+
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Nonclustered index.', @level0type = N'SCHEMA', @level0name = N'Person', @level1type = N'TABLE', @level1name = N'Address', @level2type = N'INDEX', @level2name = N'IX_Address_StateProvinceID';
 
 
@@ -41,7 +62,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Unique nonc
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'Person', @level1type = N'TABLE', @level1name = N'Address', @level2type = N'CONSTRAINT', @level2name = N'DF_Address_ModifiedDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'Person', @level1type = N'TABLE', @level1name = N'Address', @level2type = N'CONSTRAINT', @level2name = N'DF__Address__ModifiedDate';
 
 
 GO

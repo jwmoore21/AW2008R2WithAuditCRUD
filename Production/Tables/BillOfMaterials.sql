@@ -1,35 +1,57 @@
-﻿CREATE TABLE [Production].[BillOfMaterials] (
-    [BillOfMaterialsID] INT            IDENTITY (1, 1) NOT NULL,
-    [ProductAssemblyID] INT            NULL,
-    [ComponentID]       INT            NOT NULL,
-    [StartDate]         DATETIME       CONSTRAINT [DF_BillOfMaterials_StartDate] DEFAULT (getdate()) NOT NULL,
-    [EndDate]           DATETIME       NULL,
-    [UnitMeasureCode]   NCHAR (3)      NOT NULL,
-    [BOMLevel]          SMALLINT       NOT NULL,
-    [PerAssemblyQty]    DECIMAL (8, 2) CONSTRAINT [DF_BillOfMaterials_PerAssemblyQty] DEFAULT ((1.00)) NOT NULL,
-    [ModifiedDate]      DATETIME       CONSTRAINT [DF_BillOfMaterials_ModifiedDate] DEFAULT (getdate()) NOT NULL,
-    CONSTRAINT [PK_BillOfMaterials_BillOfMaterialsID] PRIMARY KEY NONCLUSTERED ([BillOfMaterialsID] ASC),
-    CONSTRAINT [CK_BillOfMaterials_BOMLevel] CHECK ([ProductAssemblyID] IS NULL AND [BOMLevel]=(0) AND [PerAssemblyQty]=(1.00) OR [ProductAssemblyID] IS NOT NULL AND [BOMLevel]>=(1)),
-    CONSTRAINT [CK_BillOfMaterials_EndDate] CHECK ([EndDate]>[StartDate] OR [EndDate] IS NULL),
-    CONSTRAINT [CK_BillOfMaterials_PerAssemblyQty] CHECK ([PerAssemblyQty]>=(1.00)),
-    CONSTRAINT [CK_BillOfMaterials_ProductAssemblyID] CHECK ([ProductAssemblyID]<>[ComponentID]),
-    CONSTRAINT [FK_BillOfMaterials_Product_ComponentID] FOREIGN KEY ([ComponentID]) REFERENCES [Production].[Product] ([ProductID]),
-    CONSTRAINT [FK_BillOfMaterials_Product_ProductAssemblyID] FOREIGN KEY ([ProductAssemblyID]) REFERENCES [Production].[Product] ([ProductID]),
-    CONSTRAINT [FK_BillOfMaterials_UnitMeasure_UnitMeasureCode] FOREIGN KEY ([UnitMeasureCode]) REFERENCES [Production].[UnitMeasure] ([UnitMeasureCode])
+﻿CREATE TABLE [Production].[BillOfMaterials] 
+(
+  [BillOfMaterialsID] INT            IDENTITY (1, 1) NOT NULL,
+  [ProductAssemblyID] INT            NULL,
+  [ComponentID]       INT            NOT NULL,
+  [StartDate]         DATETIME       CONSTRAINT [DF_BillOfMaterials_StartDate] DEFAULT (GETUTCDATE()) NOT NULL,
+  [EndDate]           DATETIME       NULL,
+  [UnitMeasureCode]   NCHAR (3)      NOT NULL,
+  [BOMLevel]          SMALLINT       NOT NULL,
+  [PerAssemblyQty]    DECIMAL (8, 2) CONSTRAINT [DF_BillOfMaterials_PerAssemblyQty] DEFAULT ((1.00)) NOT NULL,
+  [RowStatus]         TINYINT          NOT NULL,
+  [CreatedBy]         UNIQUEIDENTIFIER NOT NULL,
+  [ModifiedBy]        UNIQUEIDENTIFIER NOT NULL,
+  [CreatedDate]       DATETIME         NOT NULL,
+  [ModifiedDate]      DATETIME         NOT NULL,
+  [Uuid]              UNIQUEIDENTIFIER NOT NULL ROWGUIDCOL,
+  CONSTRAINT [PK_BillOfMaterials_BillOfMaterialsID] PRIMARY KEY NONCLUSTERED ([BillOfMaterialsID] ASC),
+  CONSTRAINT [CK_BillOfMaterials_BOMLevel] CHECK ([ProductAssemblyID] IS NULL AND [BOMLevel]=(0) AND [PerAssemblyQty]=(1.00) OR [ProductAssemblyID] IS NOT NULL AND [BOMLevel]>=(1)),
+  CONSTRAINT [CK_BillOfMaterials_EndDate] CHECK ([EndDate]>[StartDate] OR [EndDate] IS NULL),
+  CONSTRAINT [CK_BillOfMaterials_PerAssemblyQty] CHECK ([PerAssemblyQty]>=(1.00)),
+  CONSTRAINT [CK_BillOfMaterials_ProductAssemblyID] CHECK ([ProductAssemblyID]<>[ComponentID]),
+  CONSTRAINT [FK_BillOfMaterials_Product_ComponentID] FOREIGN KEY ([ComponentID]) REFERENCES [Production].[Product] ([ProductID]),
+  CONSTRAINT [FK_BillOfMaterials_Product_ProductAssemblyID] FOREIGN KEY ([ProductAssemblyID]) REFERENCES [Production].[Product] ([ProductID]),
+  CONSTRAINT [FK_BillOfMaterials_UnitMeasure_UnitMeasureCode] FOREIGN KEY ([UnitMeasureCode]) REFERENCES [Production].[UnitMeasure] ([UnitMeasureCode])
 );
-
-
 GO
+
+/* Defaults */
+ALTER TABLE [Production].[BillOfMaterials] ADD CONSTRAINT [DF__BillOfMaterials__RowStatus] DEFAULT ((1)) FOR [RowStatus]
+GO
+
+ALTER TABLE [Production].[BillOfMaterials] ADD CONSTRAINT [DF__BillOfMaterials__CreatedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [CreatedBy]
+GO
+
+ALTER TABLE [Production].[BillOfMaterials] ADD CONSTRAINT [DF__BillOfMaterials__ModifiedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [ModifiedBy]
+GO
+
+ALTER TABLE [Production].[BillOfMaterials] ADD CONSTRAINT [DF__BillOfMaterials__CreatedDate] DEFAULT (GETUTCDATE()) FOR [CreatedDate]
+GO
+
+ALTER TABLE [Production].[BillOfMaterials] ADD CONSTRAINT [DF__BillOfMaterials__ModifiedDate] DEFAULT (GETUTCDATE()) FOR [ModifiedDate]
+GO
+
+ALTER TABLE [Production].[BillOfMaterials] ADD CONSTRAINT [DF__BillOfMaterials__Uuid] DEFAULT (NEWID()) FOR [Uuid]
+GO
+
 CREATE NONCLUSTERED INDEX [IX_BillOfMaterials_UnitMeasureCode]
     ON [Production].[BillOfMaterials]([UnitMeasureCode] ASC);
-
-
 GO
+
 CREATE UNIQUE CLUSTERED INDEX [AK_BillOfMaterials_ProductAssemblyID_ComponentID_StartDate]
     ON [Production].[BillOfMaterials]([ProductAssemblyID] ASC, [ComponentID] ASC, [StartDate] ASC);
-
-
 GO
+
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Nonclustered index.', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'BillOfMaterials', @level2type = N'INDEX', @level2name = N'IX_BillOfMaterials_UnitMeasureCode';
 
 
@@ -54,7 +76,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Check const
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'BillOfMaterials', @level2type = N'CONSTRAINT', @level2name = N'DF_BillOfMaterials_ModifiedDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'BillOfMaterials', @level2type = N'CONSTRAINT', @level2name = N'DF__BillOfMaterials__ModifiedDate';
 
 
 GO

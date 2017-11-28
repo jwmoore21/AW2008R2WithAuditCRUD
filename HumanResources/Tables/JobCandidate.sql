@@ -1,24 +1,45 @@
-﻿CREATE TABLE [HumanResources].[JobCandidate] (
-    [JobCandidateID]   INT                                                      IDENTITY (1, 1) NOT NULL,
-    [BusinessEntityID] INT                                                      NULL,
-    [Resume]           XML(CONTENT [HumanResources].[HRResumeSchemaCollection]) NULL,
-    [ModifiedDate]     DATETIME                                                 CONSTRAINT [DF_JobCandidate_ModifiedDate] DEFAULT (getdate()) NOT NULL,
-    CONSTRAINT [PK_JobCandidate_JobCandidateID] PRIMARY KEY CLUSTERED ([JobCandidateID] ASC),
-    CONSTRAINT [FK_JobCandidate_Employee_BusinessEntityID] FOREIGN KEY ([BusinessEntityID]) REFERENCES [HumanResources].[Employee] ([BusinessEntityID])
+﻿CREATE TABLE [HumanResources].[JobCandidate] 
+(
+  [JobCandidateID]   INT                                                      IDENTITY (1, 1) NOT NULL,
+  [BusinessEntityID] INT                                                      NULL,
+  [Resume]           XML(CONTENT [HumanResources].[HRResumeSchemaCollection]) NULL,
+  [RowStatus]        TINYINT          NOT NULL,
+  [CreatedBy]        UNIQUEIDENTIFIER NOT NULL,
+  [ModifiedBy]       UNIQUEIDENTIFIER NOT NULL,
+  [CreatedDate]      DATETIME         NOT NULL,
+  [ModifiedDate]     DATETIME         NOT NULL,
+  [Uuid]             UNIQUEIDENTIFIER NOT NULL ROWGUIDCOL,                                          
+  CONSTRAINT [PK_JobCandidate_JobCandidateID] PRIMARY KEY CLUSTERED ([JobCandidateID] ASC),
+  CONSTRAINT [FK_JobCandidate_Employee_BusinessEntityID] FOREIGN KEY ([BusinessEntityID]) REFERENCES [HumanResources].[Employee] ([BusinessEntityID])
 );
-
-
 GO
+
+/* Defaults */
+ALTER TABLE [HumanResources].[JobCandidate] ADD CONSTRAINT [DF__JobCandidate__RowStatus] DEFAULT ((1)) FOR [RowStatus]
+GO
+
+ALTER TABLE [HumanResources].[JobCandidate] ADD CONSTRAINT [DF__JobCandidate__CreatedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [CreatedBy]
+GO
+
+ALTER TABLE [HumanResources].[JobCandidate] ADD CONSTRAINT [DF__JobCandidate__ModifiedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [ModifiedBy]
+GO
+
+ALTER TABLE [HumanResources].[JobCandidate] ADD CONSTRAINT [DF__JobCandidate__CreatedDate] DEFAULT (GETUTCDATE()) FOR [CreatedDate]
+GO
+
+ALTER TABLE [HumanResources].[JobCandidate] ADD CONSTRAINT [DF__JobCandidate__ModifiedDate] DEFAULT (GETUTCDATE()) FOR [ModifiedDate]
+GO
+
+ALTER TABLE [HumanResources].[JobCandidate] ADD CONSTRAINT [DF__JobCandidate__Uuid] DEFAULT (NEWID()) FOR [Uuid]
+GO
+
 CREATE NONCLUSTERED INDEX [IX_JobCandidate_BusinessEntityID]
     ON [HumanResources].[JobCandidate]([BusinessEntityID] ASC);
-
-
 GO
+
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Nonclustered index.', @level0type = N'SCHEMA', @level0name = N'HumanResources', @level1type = N'TABLE', @level1name = N'JobCandidate', @level2type = N'INDEX', @level2name = N'IX_JobCandidate_BusinessEntityID';
-
-
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'HumanResources', @level1type = N'TABLE', @level1name = N'JobCandidate', @level2type = N'CONSTRAINT', @level2name = N'DF_JobCandidate_ModifiedDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'HumanResources', @level1type = N'TABLE', @level1name = N'JobCandidate', @level2type = N'CONSTRAINT', @level2name = N'DF__JobCandidate__ModifiedDate';
 
 
 GO

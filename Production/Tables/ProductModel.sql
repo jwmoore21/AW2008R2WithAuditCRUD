@@ -1,45 +1,63 @@
-﻿CREATE TABLE [Production].[ProductModel] (
-    [ProductModelID]     INT                                                            IDENTITY (1, 1) NOT NULL,
-    [Name]               [dbo].[Name]                                                   NOT NULL,
-    [CatalogDescription] XML(CONTENT [Production].[ProductDescriptionSchemaCollection]) NULL,
-    [Instructions]       XML(CONTENT [Production].[ManuInstructionsSchemaCollection])   NULL,
-    [rowguid]            UNIQUEIDENTIFIER                                               CONSTRAINT [DF_ProductModel_rowguid] DEFAULT (newid()) ROWGUIDCOL NOT NULL,
-    [ModifiedDate]       DATETIME                                                       CONSTRAINT [DF_ProductModel_ModifiedDate] DEFAULT (getdate()) NOT NULL,
-    CONSTRAINT [PK_ProductModel_ProductModelID] PRIMARY KEY CLUSTERED ([ProductModelID] ASC)
+﻿CREATE TABLE [Production].[ProductModel] 
+(
+  [ProductModelID]     INT                                                            IDENTITY (1, 1) NOT NULL,
+  [Name]               [dbo].[Name]                                                   NOT NULL,
+  [CatalogDescription] XML(CONTENT [Production].[ProductDescriptionSchemaCollection]) NULL,
+  [Instructions]       XML(CONTENT [Production].[ManuInstructionsSchemaCollection])   NULL,
+  [rowguid]            UNIQUEIDENTIFIER                                               CONSTRAINT [DF_ProductModel_rowguid] DEFAULT (NEWID()) ROWGUIDCOL NOT NULL,
+  [RowStatus]    TINYINT          NOT NULL,
+  [CreatedBy]    UNIQUEIDENTIFIER NOT NULL,
+  [ModifiedBy]   UNIQUEIDENTIFIER NOT NULL,
+  [CreatedDate]  DATETIME         NOT NULL,
+  [ModifiedDate] DATETIME         NOT NULL,
+  [Uuid]         UNIQUEIDENTIFIER NOT NULL,
+  CONSTRAINT [PK_ProductModel_ProductModelID] PRIMARY KEY CLUSTERED ([ProductModelID] ASC)
 );
-
-
 GO
+
+/* Defaults */
+ALTER TABLE [Production].[ProductModel] ADD CONSTRAINT [DF__ProductModel__RowStatus] DEFAULT ((1)) FOR [RowStatus]
+GO
+
+ALTER TABLE [Production].[ProductModel] ADD CONSTRAINT [DF__ProductModel__CreatedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [CreatedBy]
+GO
+
+ALTER TABLE [Production].[ProductModel] ADD CONSTRAINT [DF__ProductModel__ModifiedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [ModifiedBy]
+GO
+
+ALTER TABLE [Production].[ProductModel] ADD CONSTRAINT [DF__ProductModel__CreatedDate] DEFAULT (GETUTCDATE()) FOR [CreatedDate]
+GO
+
+ALTER TABLE [Production].[ProductModel] ADD CONSTRAINT [DF__ProductModel__ModifiedDate] DEFAULT (GETUTCDATE()) FOR [ModifiedDate]
+GO
+
+ALTER TABLE [Production].[ProductModel] ADD CONSTRAINT [DF__ProductModel__Uuid] DEFAULT (NEWID()) FOR [Uuid]
+GO
+
 CREATE UNIQUE NONCLUSTERED INDEX [AK_ProductModel_rowguid]
     ON [Production].[ProductModel]([rowguid] ASC);
-
-
 GO
+
 CREATE UNIQUE NONCLUSTERED INDEX [AK_ProductModel_Name]
     ON [Production].[ProductModel]([Name] ASC);
-
-
 GO
+
 CREATE PRIMARY XML INDEX [PXML_ProductModel_Instructions]
     ON [Production].[ProductModel]([Instructions])
     WITH (PAD_INDEX = OFF);
-
-
 GO
+
 CREATE PRIMARY XML INDEX [PXML_ProductModel_CatalogDescription]
     ON [Production].[ProductModel]([CatalogDescription])
     WITH (PAD_INDEX = OFF);
-
-
 GO
+
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Primary XML index.', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'ProductModel', @level2type = N'INDEX', @level2name = N'PXML_ProductModel_Instructions';
-
-
 GO
+
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Primary XML index.', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'ProductModel', @level2type = N'INDEX', @level2name = N'PXML_ProductModel_CatalogDescription';
-
-
 GO
+
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Unique nonclustered index. Used to support replication samples.', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'ProductModel', @level2type = N'INDEX', @level2name = N'AK_ProductModel_rowguid';
 
 
@@ -52,7 +70,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default con
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'ProductModel', @level2type = N'CONSTRAINT', @level2name = N'DF_ProductModel_ModifiedDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'ProductModel', @level2type = N'CONSTRAINT', @level2name = N'DF__ProductModel__ModifiedDate';
 
 
 GO

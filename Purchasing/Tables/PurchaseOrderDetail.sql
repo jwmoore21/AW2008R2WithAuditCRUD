@@ -1,30 +1,55 @@
-﻿CREATE TABLE [Purchasing].[PurchaseOrderDetail] (
-    [PurchaseOrderID]       INT            NOT NULL,
-    [PurchaseOrderDetailID] INT            IDENTITY (1, 1) NOT NULL,
-    [DueDate]               DATETIME       NOT NULL,
-    [OrderQty]              SMALLINT       NOT NULL,
-    [ProductID]             INT            NOT NULL,
-    [UnitPrice]             MONEY          NOT NULL,
-    [LineTotal]             AS             (isnull([OrderQty]*[UnitPrice],(0.00))),
-    [ReceivedQty]           DECIMAL (8, 2) NOT NULL,
-    [RejectedQty]           DECIMAL (8, 2) NOT NULL,
-    [StockedQty]            AS             (isnull([ReceivedQty]-[RejectedQty],(0.00))),
-    [ModifiedDate]          DATETIME       CONSTRAINT [DF_PurchaseOrderDetail_ModifiedDate] DEFAULT (getdate()) NOT NULL,
-    CONSTRAINT [PK_PurchaseOrderDetail_PurchaseOrderID_PurchaseOrderDetailID] PRIMARY KEY CLUSTERED ([PurchaseOrderID] ASC, [PurchaseOrderDetailID] ASC),
-    CONSTRAINT [CK_PurchaseOrderDetail_OrderQty] CHECK ([OrderQty]>(0)),
-    CONSTRAINT [CK_PurchaseOrderDetail_ReceivedQty] CHECK ([ReceivedQty]>=(0.00)),
-    CONSTRAINT [CK_PurchaseOrderDetail_RejectedQty] CHECK ([RejectedQty]>=(0.00)),
-    CONSTRAINT [CK_PurchaseOrderDetail_UnitPrice] CHECK ([UnitPrice]>=(0.00)),
-    CONSTRAINT [FK_PurchaseOrderDetail_Product_ProductID] FOREIGN KEY ([ProductID]) REFERENCES [Production].[Product] ([ProductID]),
-    CONSTRAINT [FK_PurchaseOrderDetail_PurchaseOrderHeader_PurchaseOrderID] FOREIGN KEY ([PurchaseOrderID]) REFERENCES [Purchasing].[PurchaseOrderHeader] ([PurchaseOrderID])
+﻿CREATE TABLE [Purchasing].[PurchaseOrderDetail] 
+(
+  [PurchaseOrderDetailID] INT            IDENTITY (1, 1) NOT NULL,
+  [PurchaseOrderID]       INT            NOT NULL,
+  [DueDate]               DATETIME       NOT NULL,
+  [OrderQty]              SMALLINT       NOT NULL,
+  [ProductID]             INT            NOT NULL,
+  [UnitPrice]             MONEY          NOT NULL,
+  [LineTotal]             AS             (isnull([OrderQty]*[UnitPrice],(0.00))),
+  [ReceivedQty]           DECIMAL (8, 2) NOT NULL,
+  [RejectedQty]           DECIMAL (8, 2) NOT NULL,
+  [StockedQty]            AS             (isnull([ReceivedQty]-[RejectedQty],(0.00))),
+  [SubTotal]              DECIMAL (8, 2) NULL,
+  [RowStatus]    TINYINT          NOT NULL,
+  [CreatedBy]    UNIQUEIDENTIFIER NOT NULL,
+  [ModifiedBy]   UNIQUEIDENTIFIER NOT NULL,
+  [CreatedDate]  DATETIME         NOT NULL,
+  [ModifiedDate] DATETIME         NOT NULL,
+  [Uuid]         UNIQUEIDENTIFIER NOT NULL ROWGUIDCOL,
+  CONSTRAINT [PK_PurchaseOrderDetail_PurchaseOrderID_PurchaseOrderDetailID] PRIMARY KEY CLUSTERED ([PurchaseOrderID] ASC, [PurchaseOrderDetailID] ASC),
+  CONSTRAINT [CK_PurchaseOrderDetail_OrderQty] CHECK ([OrderQty]>(0)),
+  CONSTRAINT [CK_PurchaseOrderDetail_ReceivedQty] CHECK ([ReceivedQty]>=(0.00)),
+  CONSTRAINT [CK_PurchaseOrderDetail_RejectedQty] CHECK ([RejectedQty]>=(0.00)),
+  CONSTRAINT [CK_PurchaseOrderDetail_UnitPrice] CHECK ([UnitPrice]>=(0.00)),
+
+  CONSTRAINT [FK_PurchaseOrderDetail_Product_ProductID] FOREIGN KEY ([ProductID]) REFERENCES [Production].[Product] ([ProductID]),
+
+  CONSTRAINT [FK_PurchaseOrderDetail_PurchaseOrderDetail_PurchaseOrderID] FOREIGN KEY ([PurchaseOrderID]) REFERENCES [Purchasing].[PurchaseOrderHeader] ([PurchaseOrderID])
 );
-
-
 GO
+
+/* Defaults */
+ALTER TABLE [Purchasing].[PurchaseOrderDetail] ADD CONSTRAINT [DF__PurchaseOrderDetail__RowStatus] DEFAULT ((1)) FOR [RowStatus]
+GO
+
+ALTER TABLE [Purchasing].[PurchaseOrderDetail] ADD CONSTRAINT [DF__PurchaseOrderDetail__CreatedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [CreatedBy]
+GO
+
+ALTER TABLE [Purchasing].[PurchaseOrderDetail] ADD CONSTRAINT [DF__PurchaseOrderDetail__ModifiedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [ModifiedBy]
+GO
+
+ALTER TABLE [Purchasing].[PurchaseOrderDetail] ADD CONSTRAINT [DF__PurchaseOrderDetail__CreatedDate] DEFAULT (GETUTCDATE()) FOR [CreatedDate]
+GO
+
+ALTER TABLE [Purchasing].[PurchaseOrderDetail] ADD CONSTRAINT [DF__PurchaseOrderDetail__ModifiedDate] DEFAULT (GETUTCDATE()) FOR [ModifiedDate]
+GO
+
+ALTER TABLE [Purchasing].[PurchaseOrderDetail] ADD CONSTRAINT [DF__PurchaseOrderDetail__Uuid] DEFAULT (NEWID()) FOR [Uuid]
+GO
+
 CREATE NONCLUSTERED INDEX [IX_PurchaseOrderDetail_ProductID]
     ON [Purchasing].[PurchaseOrderDetail]([ProductID] ASC);
-
-
 GO
 
 CREATE TRIGGER [Purchasing].[uPurchaseOrderDetail] ON [Purchasing].[PurchaseOrderDetail] 
@@ -64,13 +89,13 @@ BEGIN
 
             -- Update SubTotal in PurchaseOrderHeader record. Note that this causes the 
             -- PurchaseOrderHeader trigger to fire which will update the RevisionNumber.
-            UPDATE [Purchasing].[PurchaseOrderHeader]
-            SET [Purchasing].[PurchaseOrderHeader].[SubTotal] = 
+            UPDATE [Purchasing].[PurchaseOrderDetail]
+            SET [Purchasing].[PurchaseOrderDetail].[SubTotal] = 
                 (SELECT SUM([Purchasing].[PurchaseOrderDetail].[LineTotal])
                     FROM [Purchasing].[PurchaseOrderDetail]
-                    WHERE [Purchasing].[PurchaseOrderHeader].[PurchaseOrderID] 
+                    WHERE [Purchasing].[PurchaseOrderDetail].[PurchaseOrderID] 
                         = [Purchasing].[PurchaseOrderDetail].[PurchaseOrderID])
-            WHERE [Purchasing].[PurchaseOrderHeader].[PurchaseOrderID] 
+            WHERE [Purchasing].[PurchaseOrderDetail].[PurchaseOrderID] 
                 IN (SELECT inserted.[PurchaseOrderID] FROM inserted);
 
             UPDATE [Purchasing].[PurchaseOrderDetail]
@@ -124,17 +149,17 @@ BEGIN
             ,inserted.[OrderQty]
             ,inserted.[UnitPrice]
         FROM inserted 
-            INNER JOIN [Purchasing].[PurchaseOrderHeader] 
-            ON inserted.[PurchaseOrderID] = [Purchasing].[PurchaseOrderHeader].[PurchaseOrderID];
+            INNER JOIN [Purchasing].[PurchaseOrderDetail] 
+            ON inserted.[PurchaseOrderID] = [Purchasing].[PurchaseOrderDetail].[PurchaseOrderID];
 
         -- Update SubTotal in PurchaseOrderHeader record. Note that this causes the 
         -- PurchaseOrderHeader trigger to fire which will update the RevisionNumber.
-        UPDATE [Purchasing].[PurchaseOrderHeader]
-        SET [Purchasing].[PurchaseOrderHeader].[SubTotal] = 
+        UPDATE [Purchasing].[PurchaseOrderDetail]
+        SET [Purchasing].[PurchaseOrderDetail].[SubTotal] = 
             (SELECT SUM([Purchasing].[PurchaseOrderDetail].[LineTotal])
                 FROM [Purchasing].[PurchaseOrderDetail]
-                WHERE [Purchasing].[PurchaseOrderHeader].[PurchaseOrderID] = [Purchasing].[PurchaseOrderDetail].[PurchaseOrderID])
-        WHERE [Purchasing].[PurchaseOrderHeader].[PurchaseOrderID] IN (SELECT inserted.[PurchaseOrderID] FROM inserted);
+                WHERE [Purchasing].[PurchaseOrderDetail].[PurchaseOrderID] = [Purchasing].[PurchaseOrderDetail].[PurchaseOrderID])
+        WHERE [Purchasing].[PurchaseOrderDetail].[PurchaseOrderID] IN (SELECT inserted.[PurchaseOrderID] FROM inserted);
     END TRY
     BEGIN CATCH
         EXECUTE [dbo].[uspPrintError];
@@ -178,11 +203,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Check const
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'Purchasing', @level1type = N'TABLE', @level1name = N'PurchaseOrderDetail', @level2type = N'CONSTRAINT', @level2name = N'DF_PurchaseOrderDetail_ModifiedDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'Purchasing', @level1type = N'TABLE', @level1name = N'PurchaseOrderDetail', @level2type = N'CONSTRAINT', @level2name = N'DF__PurchaseOrderDetail__ModifiedDate';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Foreign key constraint referencing PurchaseOrderHeader.PurchaseOrderID.', @level0type = N'SCHEMA', @level0name = N'Purchasing', @level1type = N'TABLE', @level1name = N'PurchaseOrderDetail', @level2type = N'CONSTRAINT', @level2name = N'FK_PurchaseOrderDetail_PurchaseOrderHeader_PurchaseOrderID';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Foreign key constraint referencing PurchaseOrderHeader.PurchaseOrderID.', @level0type = N'SCHEMA', @level0name = N'Purchasing', @level1type = N'TABLE', @level1name = N'PurchaseOrderDetail', @level2type = N'CONSTRAINT', @level2name = N'FK_PurchaseOrderDetail_PurchaseOrderDetail_PurchaseOrderID';
 
 
 GO

@@ -1,32 +1,52 @@
-﻿CREATE TABLE [Production].[ProductCategory] (
-    [ProductCategoryID] INT              IDENTITY (1, 1) NOT NULL,
-    [Name]              [dbo].[Name]     NOT NULL,
-    [rowguid]           UNIQUEIDENTIFIER CONSTRAINT [DF_ProductCategory_rowguid] DEFAULT (newid()) ROWGUIDCOL NOT NULL,
-    [ModifiedDate]      DATETIME         CONSTRAINT [DF_ProductCategory_ModifiedDate] DEFAULT (getdate()) NOT NULL,
-    CONSTRAINT [PK_ProductCategory_ProductCategoryID] PRIMARY KEY CLUSTERED ([ProductCategoryID] ASC)
+﻿CREATE TABLE [Production].[ProductCategory] 
+(
+  [ProductCategoryID] INT              IDENTITY (1, 1) NOT NULL,
+  [Name]              [dbo].[Name]     NOT NULL,
+  [rowguid]           UNIQUEIDENTIFIER CONSTRAINT [DF_ProductCategory_rowguid] DEFAULT (NEWID()) ROWGUIDCOL NOT NULL,
+  [RowStatus]    TINYINT          NOT NULL,
+  [CreatedBy]    UNIQUEIDENTIFIER NOT NULL,
+  [ModifiedBy]   UNIQUEIDENTIFIER NOT NULL,
+  [CreatedDate]  DATETIME         NOT NULL,
+  [ModifiedDate] DATETIME         NOT NULL,
+  [Uuid]         UNIQUEIDENTIFIER NOT NULL,
+  CONSTRAINT [PK_ProductCategory_ProductCategoryID] PRIMARY KEY CLUSTERED ([ProductCategoryID] ASC)
 );
-
-
 GO
+
+/* Defaults */
+ALTER TABLE [Production].[ProductCategory] ADD CONSTRAINT [DF__ProductCategory__RowStatus] DEFAULT ((1)) FOR [RowStatus]
+GO
+
+ALTER TABLE [Production].[ProductCategory] ADD CONSTRAINT [DF__ProductCategory__CreatedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [CreatedBy]
+GO
+
+ALTER TABLE [Production].[ProductCategory] ADD CONSTRAINT [DF__ProductCategory__ModifiedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [ModifiedBy]
+GO
+
+ALTER TABLE [Production].[ProductCategory] ADD CONSTRAINT [DF__ProductCategory__CreatedDate] DEFAULT (GETUTCDATE()) FOR [CreatedDate]
+GO
+
+ALTER TABLE [Production].[ProductCategory] ADD CONSTRAINT [DF__ProductCategory__ModifiedDate] DEFAULT (GETUTCDATE()) FOR [ModifiedDate]
+GO
+
+ALTER TABLE [Production].[ProductCategory] ADD CONSTRAINT [DF__ProductCategory__Uuid] DEFAULT (NEWID()) FOR [Uuid]
+GO
+
 CREATE UNIQUE NONCLUSTERED INDEX [AK_ProductCategory_rowguid]
     ON [Production].[ProductCategory]([rowguid] ASC);
-
-
 GO
+
 CREATE UNIQUE NONCLUSTERED INDEX [AK_ProductCategory_Name]
     ON [Production].[ProductCategory]([Name] ASC);
-
-
 GO
+
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Unique nonclustered index. Used to support replication samples.', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'ProductCategory', @level2type = N'INDEX', @level2name = N'AK_ProductCategory_rowguid';
-
-
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Unique nonclustered index.', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'ProductCategory', @level2type = N'INDEX', @level2name = N'AK_ProductCategory_Name';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'ProductCategory', @level2type = N'CONSTRAINT', @level2name = N'DF_ProductCategory_ModifiedDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'ProductCategory', @level2type = N'CONSTRAINT', @level2name = N'DF__ProductCategory__ModifiedDate';
 
 
 GO

@@ -1,28 +1,48 @@
-﻿CREATE TABLE [Production].[ProductSubcategory] (
-    [ProductSubcategoryID] INT              IDENTITY (1, 1) NOT NULL,
-    [ProductCategoryID]    INT              NOT NULL,
-    [Name]                 [dbo].[Name]     NOT NULL,
-    [rowguid]              UNIQUEIDENTIFIER CONSTRAINT [DF_ProductSubcategory_rowguid] DEFAULT (newid()) ROWGUIDCOL NOT NULL,
-    [ModifiedDate]         DATETIME         CONSTRAINT [DF_ProductSubcategory_ModifiedDate] DEFAULT (getdate()) NOT NULL,
-    CONSTRAINT [PK_ProductSubcategory_ProductSubcategoryID] PRIMARY KEY CLUSTERED ([ProductSubcategoryID] ASC),
-    CONSTRAINT [FK_ProductSubcategory_ProductCategory_ProductCategoryID] FOREIGN KEY ([ProductCategoryID]) REFERENCES [Production].[ProductCategory] ([ProductCategoryID])
+﻿CREATE TABLE [Production].[ProductSubcategory] 
+(
+  [ProductSubcategoryID] INT              IDENTITY (1, 1) NOT NULL,
+  [ProductCategoryID]    INT              NOT NULL,
+  [Name]                 [dbo].[Name]     NOT NULL,
+  [rowguid]              UNIQUEIDENTIFIER CONSTRAINT [DF_ProductSubcategory_rowguid] DEFAULT (NEWID()) ROWGUIDCOL NOT NULL,
+  [RowStatus]    TINYINT          NOT NULL,
+  [CreatedBy]    UNIQUEIDENTIFIER NOT NULL,
+  [ModifiedBy]   UNIQUEIDENTIFIER NOT NULL,
+  [CreatedDate]  DATETIME         NOT NULL,
+  [ModifiedDate] DATETIME         NOT NULL,
+  [Uuid]         UNIQUEIDENTIFIER NOT NULL,
+  CONSTRAINT [PK_ProductSubcategory_ProductSubcategoryID] PRIMARY KEY CLUSTERED ([ProductSubcategoryID] ASC),
+  CONSTRAINT [FK_ProductSubcategory_ProductCategory_ProductCategoryID] FOREIGN KEY ([ProductCategoryID]) REFERENCES [Production].[ProductCategory] ([ProductCategoryID])
 );
-
-
 GO
+
+/* Defaults */
+ALTER TABLE [Production].[ProductSubcategory] ADD CONSTRAINT [DF__ProductSubcategory__RowStatus] DEFAULT ((1)) FOR [RowStatus]
+GO
+
+ALTER TABLE [Production].[ProductSubcategory] ADD CONSTRAINT [DF__ProductSubcategory__CreatedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [CreatedBy]
+GO
+
+ALTER TABLE [Production].[ProductSubcategory] ADD CONSTRAINT [DF__ProductSubcategory__ModifiedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [ModifiedBy]
+GO
+
+ALTER TABLE [Production].[ProductSubcategory] ADD CONSTRAINT [DF__ProductSubcategory__CreatedDate] DEFAULT (GETUTCDATE()) FOR [CreatedDate]
+GO
+
+ALTER TABLE [Production].[ProductSubcategory] ADD CONSTRAINT [DF__ProductSubcategory__ModifiedDate] DEFAULT (GETUTCDATE()) FOR [ModifiedDate]
+GO
+
+ALTER TABLE [Production].[ProductSubcategory] ADD CONSTRAINT [DF__ProductSubcategory__Uuid] DEFAULT (NEWID()) FOR [Uuid]
+GO
+
 CREATE UNIQUE NONCLUSTERED INDEX [AK_ProductSubcategory_rowguid]
     ON [Production].[ProductSubcategory]([rowguid] ASC);
-
-
 GO
+
 CREATE UNIQUE NONCLUSTERED INDEX [AK_ProductSubcategory_Name]
     ON [Production].[ProductSubcategory]([Name] ASC);
-
-
 GO
+
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Unique nonclustered index. Used to support replication samples.', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'ProductSubcategory', @level2type = N'INDEX', @level2name = N'AK_ProductSubcategory_rowguid';
-
-
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Unique nonclustered index.', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'ProductSubcategory', @level2type = N'INDEX', @level2name = N'AK_ProductSubcategory_Name';
 
@@ -32,7 +52,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default con
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'ProductSubcategory', @level2type = N'CONSTRAINT', @level2name = N'DF_ProductSubcategory_ModifiedDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'ProductSubcategory', @level2type = N'CONSTRAINT', @level2name = N'DF__ProductSubcategory__ModifiedDate';
 
 
 GO

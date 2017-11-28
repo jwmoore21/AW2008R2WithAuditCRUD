@@ -1,33 +1,54 @@
-﻿CREATE TABLE [Production].[WorkOrder] (
-    [WorkOrderID]   INT      IDENTITY (1, 1) NOT NULL,
-    [ProductID]     INT      NOT NULL,
-    [OrderQty]      INT      NOT NULL,
-    [StockedQty]    AS       (isnull([OrderQty]-[ScrappedQty],(0))),
-    [ScrappedQty]   SMALLINT NOT NULL,
-    [StartDate]     DATETIME NOT NULL,
-    [EndDate]       DATETIME NULL,
-    [DueDate]       DATETIME NOT NULL,
-    [ScrapReasonID] SMALLINT NULL,
-    [ModifiedDate]  DATETIME CONSTRAINT [DF_WorkOrder_ModifiedDate] DEFAULT (getdate()) NOT NULL,
-    CONSTRAINT [PK_WorkOrder_WorkOrderID] PRIMARY KEY CLUSTERED ([WorkOrderID] ASC),
-    CONSTRAINT [CK_WorkOrder_EndDate] CHECK ([EndDate]>=[StartDate] OR [EndDate] IS NULL),
-    CONSTRAINT [CK_WorkOrder_OrderQty] CHECK ([OrderQty]>(0)),
-    CONSTRAINT [CK_WorkOrder_ScrappedQty] CHECK ([ScrappedQty]>=(0)),
-    CONSTRAINT [FK_WorkOrder_Product_ProductID] FOREIGN KEY ([ProductID]) REFERENCES [Production].[Product] ([ProductID]),
-    CONSTRAINT [FK_WorkOrder_ScrapReason_ScrapReasonID] FOREIGN KEY ([ScrapReasonID]) REFERENCES [Production].[ScrapReason] ([ScrapReasonID])
+﻿CREATE TABLE [Production].[WorkOrder] 
+(
+  [WorkOrderID]   INT      IDENTITY (1, 1) NOT NULL,
+  [ProductID]     INT      NOT NULL,
+  [OrderQty]      INT      NOT NULL,
+  [StockedQty]    AS       (isnull([OrderQty]-[ScrappedQty],(0))),
+  [ScrappedQty]   SMALLINT NOT NULL,
+  [StartDate]     DATETIME NOT NULL,
+  [EndDate]       DATETIME NULL,
+  [DueDate]       DATETIME NOT NULL,
+  [ScrapReasonID] SMALLINT NULL,
+  [RowStatus]    TINYINT          NOT NULL,
+  [CreatedBy]    UNIQUEIDENTIFIER NOT NULL,
+  [ModifiedBy]   UNIQUEIDENTIFIER NOT NULL,
+  [CreatedDate]  DATETIME         NOT NULL,
+  [ModifiedDate] DATETIME         NOT NULL,
+  [Uuid]         UNIQUEIDENTIFIER NOT NULL ROWGUIDCOL,
+  CONSTRAINT [PK_WorkOrder_WorkOrderID] PRIMARY KEY CLUSTERED ([WorkOrderID] ASC),
+  CONSTRAINT [CK_WorkOrder_EndDate] CHECK ([EndDate]>=[StartDate] OR [EndDate] IS NULL),
+  CONSTRAINT [CK_WorkOrder_OrderQty] CHECK ([OrderQty]>(0)),
+  CONSTRAINT [CK_WorkOrder_ScrappedQty] CHECK ([ScrappedQty]>=(0)),
+  CONSTRAINT [FK_WorkOrder_Product_ProductID] FOREIGN KEY ([ProductID]) REFERENCES [Production].[Product] ([ProductID]),
+  CONSTRAINT [FK_WorkOrder_ScrapReason_ScrapReasonID] FOREIGN KEY ([ScrapReasonID]) REFERENCES [Production].[ScrapReason] ([ScrapReasonID])
 );
-
-
 GO
+
+/* Defaults */
+ALTER TABLE [Production].[WorkOrder] ADD CONSTRAINT [DF__WorkOrder__RowStatus] DEFAULT ((1)) FOR [RowStatus]
+GO
+
+ALTER TABLE [Production].[WorkOrder] ADD CONSTRAINT [DF__WorkOrder__CreatedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [CreatedBy]
+GO
+
+ALTER TABLE [Production].[WorkOrder] ADD CONSTRAINT [DF__WorkOrder__ModifiedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [ModifiedBy]
+GO
+
+ALTER TABLE [Production].[WorkOrder] ADD CONSTRAINT [DF__WorkOrder__CreatedDate] DEFAULT (GETUTCDATE()) FOR [CreatedDate]
+GO
+
+ALTER TABLE [Production].[WorkOrder] ADD CONSTRAINT [DF__WorkOrder__ModifiedDate] DEFAULT (GETUTCDATE()) FOR [ModifiedDate]
+GO
+
+ALTER TABLE [Production].[WorkOrder] ADD CONSTRAINT [DF__WorkOrder__Uuid] DEFAULT (NEWID()) FOR [Uuid]
+GO
+
 CREATE NONCLUSTERED INDEX [IX_WorkOrder_ProductID]
     ON [Production].[WorkOrder]([ProductID] ASC);
-
-
 GO
+
 CREATE NONCLUSTERED INDEX [IX_WorkOrder_ScrapReasonID]
     ON [Production].[WorkOrder]([ScrapReasonID] ASC);
-
-
 GO
 
 CREATE TRIGGER [Production].[uWorkOrder] ON [Production].[WorkOrder] 
@@ -144,7 +165,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Check const
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'WorkOrder', @level2type = N'CONSTRAINT', @level2name = N'DF_WorkOrder_ModifiedDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'WorkOrder', @level2type = N'CONSTRAINT', @level2name = N'DF__WorkOrder__ModifiedDate';
 
 
 GO

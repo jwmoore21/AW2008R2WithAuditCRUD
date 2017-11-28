@@ -1,41 +1,63 @@
-﻿CREATE TABLE [Production].[WorkOrderRouting] (
-    [WorkOrderID]        INT            NOT NULL,
-    [ProductID]          INT            NOT NULL,
-    [OperationSequence]  SMALLINT       NOT NULL,
-    [LocationID]         SMALLINT       NOT NULL,
-    [ScheduledStartDate] DATETIME       NOT NULL,
-    [ScheduledEndDate]   DATETIME       NOT NULL,
-    [ActualStartDate]    DATETIME       NULL,
-    [ActualEndDate]      DATETIME       NULL,
-    [ActualResourceHrs]  DECIMAL (9, 4) NULL,
-    [PlannedCost]        MONEY          NOT NULL,
-    [ActualCost]         MONEY          NULL,
-    [ModifiedDate]       DATETIME       CONSTRAINT [DF_WorkOrderRouting_ModifiedDate] DEFAULT (getdate()) NOT NULL,
-    CONSTRAINT [PK_WorkOrderRouting_WorkOrderID_ProductID_OperationSequence] PRIMARY KEY CLUSTERED ([WorkOrderID] ASC, [ProductID] ASC, [OperationSequence] ASC),
-    CONSTRAINT [CK_WorkOrderRouting_ActualCost] CHECK ([ActualCost]>(0.00)),
-    CONSTRAINT [CK_WorkOrderRouting_ActualEndDate] CHECK ([ActualEndDate]>=[ActualStartDate] OR [ActualEndDate] IS NULL OR [ActualStartDate] IS NULL),
-    CONSTRAINT [CK_WorkOrderRouting_ActualResourceHrs] CHECK ([ActualResourceHrs]>=(0.0000)),
-    CONSTRAINT [CK_WorkOrderRouting_PlannedCost] CHECK ([PlannedCost]>(0.00)),
-    CONSTRAINT [CK_WorkOrderRouting_ScheduledEndDate] CHECK ([ScheduledEndDate]>=[ScheduledStartDate]),
-    CONSTRAINT [FK_WorkOrderRouting_Location_LocationID] FOREIGN KEY ([LocationID]) REFERENCES [Production].[Location] ([LocationID]),
-    CONSTRAINT [FK_WorkOrderRouting_WorkOrder_WorkOrderID] FOREIGN KEY ([WorkOrderID]) REFERENCES [Production].[WorkOrder] ([WorkOrderID])
+﻿CREATE TABLE [Production].[WorkOrderRouting] 
+(
+  [WorkOrderID]        INT            NOT NULL,
+  [ProductID]          INT            NOT NULL,
+  [OperationSequence]  SMALLINT       NOT NULL,
+  [LocationID]         SMALLINT       NOT NULL,
+  [ScheduledStartDate] DATETIME       NOT NULL,
+  [ScheduledEndDate]   DATETIME       NOT NULL,
+  [ActualStartDate]    DATETIME       NULL,
+  [ActualEndDate]      DATETIME       NULL,
+  [ActualResourceHrs]  DECIMAL (9, 4) NULL,
+  [PlannedCost]        MONEY          NOT NULL,
+  [ActualCost]         MONEY          NULL,
+  [RowStatus]    TINYINT          NOT NULL,
+  [CreatedBy]    UNIQUEIDENTIFIER NOT NULL,
+  [ModifiedBy]   UNIQUEIDENTIFIER NOT NULL,
+  [CreatedDate]  DATETIME         NOT NULL,
+  [ModifiedDate] DATETIME         NOT NULL,
+  [Uuid]         UNIQUEIDENTIFIER NOT NULL ROWGUIDCOL,
+  CONSTRAINT [PK_WorkOrderRouting_WorkOrderID_ProductID_OperationSequence] PRIMARY KEY CLUSTERED ([WorkOrderID] ASC, [ProductID] ASC, [OperationSequence] ASC),
+  CONSTRAINT [CK_WorkOrderRouting_ActualCost] CHECK ([ActualCost]>(0.00)),
+  CONSTRAINT [CK_WorkOrderRouting_ActualEndDate] CHECK ([ActualEndDate]>=[ActualStartDate] OR [ActualEndDate] IS NULL OR [ActualStartDate] IS NULL),
+  CONSTRAINT [CK_WorkOrderRouting_ActualResourceHrs] CHECK ([ActualResourceHrs]>=(0.0000)),
+  CONSTRAINT [CK_WorkOrderRouting_PlannedCost] CHECK ([PlannedCost]>(0.00)),
+  CONSTRAINT [CK_WorkOrderRouting_ScheduledEndDate] CHECK ([ScheduledEndDate]>=[ScheduledStartDate]),
+  CONSTRAINT [FK_WorkOrderRouting_Location_LocationID] FOREIGN KEY ([LocationID]) REFERENCES [Production].[Location] ([LocationID]),
+  CONSTRAINT [FK_WorkOrderRouting_WorkOrder_WorkOrderID] FOREIGN KEY ([WorkOrderID]) REFERENCES [Production].[WorkOrder] ([WorkOrderID])
 );
-
-
 GO
+
+/* Defaults */
+ALTER TABLE [Production].[WorkOrderRouting] ADD CONSTRAINT [DF__WorkOrderRouting__RowStatus] DEFAULT ((1)) FOR [RowStatus]
+GO
+
+ALTER TABLE [Production].[WorkOrderRouting] ADD CONSTRAINT [DF__WorkOrderRouting__CreatedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [CreatedBy]
+GO
+
+ALTER TABLE [Production].[WorkOrderRouting] ADD CONSTRAINT [DF__WorkOrderRouting__ModifiedBy] DEFAULT ('4E3A7D6D-8351-8494-FDB7-39E2A3A2E972') FOR [ModifiedBy]
+GO
+
+ALTER TABLE [Production].[WorkOrderRouting] ADD CONSTRAINT [DF__WorkOrderRouting__CreatedDate] DEFAULT (GETUTCDATE()) FOR [CreatedDate]
+GO
+
+ALTER TABLE [Production].[WorkOrderRouting] ADD CONSTRAINT [DF__WorkOrderRouting__ModifiedDate] DEFAULT (GETUTCDATE()) FOR [ModifiedDate]
+GO
+
+ALTER TABLE [Production].[WorkOrderRouting] ADD CONSTRAINT [DF__WorkOrderRouting__Uuid] DEFAULT (NEWID()) FOR [Uuid]
+GO
+
+
 CREATE NONCLUSTERED INDEX [IX_WorkOrderRouting_ProductID]
     ON [Production].[WorkOrderRouting]([ProductID] ASC);
-
-
 GO
+
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Nonclustered index.', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'WorkOrderRouting', @level2type = N'INDEX', @level2name = N'IX_WorkOrderRouting_ProductID';
-
-
 GO
+
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Check constraint [ActualCost] > (0.00)', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'WorkOrderRouting', @level2type = N'CONSTRAINT', @level2name = N'CK_WorkOrderRouting_ActualCost';
-
-
 GO
+
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Check constraint [PlannedCost] > (0.00)', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'WorkOrderRouting', @level2type = N'CONSTRAINT', @level2name = N'CK_WorkOrderRouting_PlannedCost';
 
 
@@ -52,7 +74,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Check const
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'WorkOrderRouting', @level2type = N'CONSTRAINT', @level2name = N'DF_WorkOrderRouting_ModifiedDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Default constraint value of GETDATE()', @level0type = N'SCHEMA', @level0name = N'Production', @level1type = N'TABLE', @level1name = N'WorkOrderRouting', @level2type = N'CONSTRAINT', @level2name = N'DF__WorkOrderRouting__ModifiedDate';
 
 
 GO
