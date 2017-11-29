@@ -1,10 +1,10 @@
 /*
-IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Sales].[uspDel_salesorderheadersalesreason]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [Sales].[uspDel_salesorderheadersalesreason]
+IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Sales].[uspDel_SalesOrderHeaderSalesReason]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [Sales].[uspDel_SalesOrderHeaderSalesReason]
 GO
 */
 
-CREATE PROCEDURE [Sales].[uspDel_salesorderheadersalesreason]
+CREATE PROCEDURE [Sales].[uspDel_SalesOrderHeaderSalesReason]
   @SalesOrderID INT,
   @SalesReasonID INT,
   -- Return output options
@@ -21,7 +21,7 @@ AS
 WARNING: THIS IS A GENERATED CODE FILE! PLEASE DO NOT ALTER!
 ================================================================================
 Schema:      Sales
-Object:      uspDel_salesorderheadersalesreason
+Object:      uspDel_SalesOrderHeaderSalesReason
 
 Description: Delete a record(s) from the given table.
 
@@ -220,7 +220,7 @@ SET @SalesOrderID = FILL IN;
 DECLARE @SalesReasonID INT;
 SET @SalesReasonID = FILL IN;
 
-EXEC Sales.uspDel_salesorderheadersalesreason
+EXEC Sales.uspDel_SalesOrderHeaderSalesReason
   @SalesOrderID = @SalesOrderID,
   @SalesReasonID = @SalesReasonID,
   @ReturnOutput   = 1,
@@ -240,9 +240,9 @@ GO
 
 EXECUTE sp_addextendedproperty
   @name = N'MS_Description',
-  @value = N'Delete a single record from the table. Not auditing is performed, however triggers are handled with a proper OUTPUT for information.',
+  @value = N'Delete a single record from the table. No auditing is performed, however triggers are handled with a proper OUTPUT for information.',
   @level0type = N'SCHEMA',
   @level0name = N'Sales',
   @level1type = N'PROCEDURE',
-  @level1name = N'uspDel_salesorderheadersalesreason';
+  @level1name = N'uspDel_SalesOrderHeaderSalesReason';
 GO

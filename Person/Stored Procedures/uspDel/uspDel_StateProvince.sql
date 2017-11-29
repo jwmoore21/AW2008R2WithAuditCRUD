@@ -1,10 +1,10 @@
 /*
-IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Person].[uspDel_stateprovince]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [Person].[uspDel_stateprovince]
+IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Person].[uspDel_StateProvince]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [Person].[uspDel_StateProvince]
 GO
 */
 
-CREATE PROCEDURE [Person].[uspDel_stateprovince]
+CREATE PROCEDURE [Person].[uspDel_StateProvince]
   @StateProvinceID INT,
   -- Return output options
   @ReturnOutput   BIT = 0,
@@ -20,7 +20,7 @@ AS
 WARNING: THIS IS A GENERATED CODE FILE! PLEASE DO NOT ALTER!
 ================================================================================
 Schema:      Person
-Object:      uspDel_stateprovince
+Object:      uspDel_StateProvince
 
 Description: Delete a record(s) from the given table.
 
@@ -234,7 +234,7 @@ DECLARE @XmlResults XML;
 DECLARE @StateProvinceID INT;
 SET @StateProvinceID = FILL IN;
 
-EXEC Person.uspDel_stateprovince
+EXEC Person.uspDel_StateProvince
   @StateProvinceID = @StateProvinceID,
   @ReturnOutput   = 1,
   @ReturnAsTable  = 1,
@@ -253,9 +253,9 @@ GO
 
 EXECUTE sp_addextendedproperty
   @name = N'MS_Description',
-  @value = N'Delete a single record from the table. Not auditing is performed, however triggers are handled with a proper OUTPUT for information.',
+  @value = N'Delete a single record from the table. No auditing is performed, however triggers are handled with a proper OUTPUT for information.',
   @level0type = N'SCHEMA',
   @level0name = N'Person',
   @level1type = N'PROCEDURE',
-  @level1name = N'uspDel_stateprovince';
+  @level1name = N'uspDel_StateProvince';
 GO

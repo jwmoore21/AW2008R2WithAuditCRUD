@@ -1,10 +1,10 @@
 /*
-IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Sales].[uspDel_salesterritory]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [Sales].[uspDel_salesterritory]
+IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Sales].[uspDel_SalesTerritory]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [Sales].[uspDel_SalesTerritory]
 GO
 */
 
-CREATE PROCEDURE [Sales].[uspDel_salesterritory]
+CREATE PROCEDURE [Sales].[uspDel_SalesTerritory]
   @TerritoryID INT,
   -- Return output options
   @ReturnOutput   BIT = 0,
@@ -20,7 +20,7 @@ AS
 WARNING: THIS IS A GENERATED CODE FILE! PLEASE DO NOT ALTER!
 ================================================================================
 Schema:      Sales
-Object:      uspDel_salesterritory
+Object:      uspDel_SalesTerritory
 
 Description: Delete a record(s) from the given table.
 
@@ -242,7 +242,7 @@ DECLARE @XmlResults XML;
 DECLARE @TerritoryID INT;
 SET @TerritoryID = FILL IN;
 
-EXEC Sales.uspDel_salesterritory
+EXEC Sales.uspDel_SalesTerritory
   @TerritoryID = @TerritoryID,
   @ReturnOutput   = 1,
   @ReturnAsTable  = 1,
@@ -261,9 +261,9 @@ GO
 
 EXECUTE sp_addextendedproperty
   @name = N'MS_Description',
-  @value = N'Delete a single record from the table. Not auditing is performed, however triggers are handled with a proper OUTPUT for information.',
+  @value = N'Delete a single record from the table. No auditing is performed, however triggers are handled with a proper OUTPUT for information.',
   @level0type = N'SCHEMA',
   @level0name = N'Sales',
   @level1type = N'PROCEDURE',
-  @level1name = N'uspDel_salesterritory';
+  @level1name = N'uspDel_SalesTerritory';
 GO

@@ -1,10 +1,10 @@
 /*
-IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Sales].[uspDel_personcreditcard]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [Sales].[uspDel_personcreditcard]
+IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Sales].[uspDel_PersonCreditCard]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [Sales].[uspDel_PersonCreditCard]
 GO
 */
 
-CREATE PROCEDURE [Sales].[uspDel_personcreditcard]
+CREATE PROCEDURE [Sales].[uspDel_PersonCreditCard]
   @BusinessEntityID INT,
   @CreditCardID INT,
   -- Return output options
@@ -21,7 +21,7 @@ AS
 WARNING: THIS IS A GENERATED CODE FILE! PLEASE DO NOT ALTER!
 ================================================================================
 Schema:      Sales
-Object:      uspDel_personcreditcard
+Object:      uspDel_PersonCreditCard
 
 Description: Delete a record(s) from the given table.
 
@@ -220,7 +220,7 @@ SET @BusinessEntityID = FILL IN;
 DECLARE @CreditCardID INT;
 SET @CreditCardID = FILL IN;
 
-EXEC Sales.uspDel_personcreditcard
+EXEC Sales.uspDel_PersonCreditCard
   @BusinessEntityID = @BusinessEntityID,
   @CreditCardID = @CreditCardID,
   @ReturnOutput   = 1,
@@ -240,9 +240,9 @@ GO
 
 EXECUTE sp_addextendedproperty
   @name = N'MS_Description',
-  @value = N'Delete a single record from the table. Not auditing is performed, however triggers are handled with a proper OUTPUT for information.',
+  @value = N'Delete a single record from the table. No auditing is performed, however triggers are handled with a proper OUTPUT for information.',
   @level0type = N'SCHEMA',
   @level0name = N'Sales',
   @level1type = N'PROCEDURE',
-  @level1name = N'uspDel_personcreditcard';
+  @level1name = N'uspDel_PersonCreditCard';
 GO

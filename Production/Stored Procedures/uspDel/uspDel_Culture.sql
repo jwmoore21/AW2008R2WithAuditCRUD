@@ -1,10 +1,10 @@
 /*
-IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Production].[uspDel_culture]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [Production].[uspDel_culture]
+IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Production].[uspDel_Culture]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [Production].[uspDel_Culture]
 GO
 */
 
-CREATE PROCEDURE [Production].[uspDel_culture]
+CREATE PROCEDURE [Production].[uspDel_Culture]
   @CultureID NCHAR(6),
   -- Return output options
   @ReturnOutput   BIT = 0,
@@ -20,7 +20,7 @@ AS
 WARNING: THIS IS A GENERATED CODE FILE! PLEASE DO NOT ALTER!
 ================================================================================
 Schema:      Production
-Object:      uspDel_culture
+Object:      uspDel_Culture
 
 Description: Delete a record(s) from the given table.
 
@@ -214,7 +214,7 @@ DECLARE @XmlResults XML;
 DECLARE @CultureID NCHAR;
 SET @CultureID = FILL IN;
 
-EXEC Production.uspDel_culture
+EXEC Production.uspDel_Culture
   @CultureID = @CultureID,
   @ReturnOutput   = 1,
   @ReturnAsTable  = 1,
@@ -233,9 +233,9 @@ GO
 
 EXECUTE sp_addextendedproperty
   @name = N'MS_Description',
-  @value = N'Delete a single record from the table. Not auditing is performed, however triggers are handled with a proper OUTPUT for information.',
+  @value = N'Delete a single record from the table. No auditing is performed, however triggers are handled with a proper OUTPUT for information.',
   @level0type = N'SCHEMA',
   @level0name = N'Production',
   @level1type = N'PROCEDURE',
-  @level1name = N'uspDel_culture';
+  @level1name = N'uspDel_Culture';
 GO

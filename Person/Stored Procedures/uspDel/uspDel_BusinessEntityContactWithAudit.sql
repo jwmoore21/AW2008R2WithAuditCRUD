@@ -118,12 +118,12 @@ BEGIN
       /* Parent table has an update trigger enabled, and the audit table
          exists in the local audit schema, let the trigger handle
          the auditing */
-      DELETE FROM [Person].[businessentitycontact]
+      DELETE FROM [Person].[BusinessEntityContact]
 
       WHERE
-        [businessentitycontact].[BusinessEntityID] = @_BusinessEntityID
-        AND [businessentitycontact].[PersonID] = @_PersonID
-        AND [businessentitycontact].[ContactTypeID] = @_ContactTypeID
+        [BusinessEntityContact].[BusinessEntityID] = @_BusinessEntityID
+        AND [BusinessEntityContact].[PersonID] = @_PersonID
+        AND [BusinessEntityContact].[ContactTypeID] = @_ContactTypeID
       ;
 
     END; /* HasInsteadOfDeleteTrigger */
@@ -144,10 +144,10 @@ BEGIN
 
         /* No update trigger found on the parent table, however, we did find
            the audit table in our audit schema, save the audit data */
-        DELETE FROM [Person].[businessentitycontact]
+        DELETE FROM [Person].[BusinessEntityContact]
 
         OUTPUT
-          CONVERT(VARCHAR(64),NEWID()),
+          CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER),
           @_AuditStatus,
           @_AuditAppUser,
           @_AuditSqlUser,
@@ -169,9 +169,9 @@ BEGIN
           [Audit].[AuditBusinessEntityContact]
 
         WHERE
-          [businessentitycontact].[BusinessEntityID] = @_BusinessEntityID
-          AND [businessentitycontact].[PersonID] = @_PersonID
-          AND [businessentitycontact].[ContactTypeID] = @_ContactTypeID
+          [BusinessEntityContact].[BusinessEntityID] = @_BusinessEntityID
+          AND [BusinessEntityContact].[PersonID] = @_PersonID
+          AND [BusinessEntityContact].[ContactTypeID] = @_ContactTypeID
         ;
 
       END; /* HasAuditTable */

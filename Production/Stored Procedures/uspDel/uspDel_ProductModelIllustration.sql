@@ -1,10 +1,10 @@
 /*
-IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Production].[uspDel_productmodelillustration]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [Production].[uspDel_productmodelillustration]
+IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Production].[uspDel_ProductModelIllustration]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [Production].[uspDel_ProductModelIllustration]
 GO
 */
 
-CREATE PROCEDURE [Production].[uspDel_productmodelillustration]
+CREATE PROCEDURE [Production].[uspDel_ProductModelIllustration]
   @ProductModelID INT,
   @IllustrationID INT,
   -- Return output options
@@ -21,7 +21,7 @@ AS
 WARNING: THIS IS A GENERATED CODE FILE! PLEASE DO NOT ALTER!
 ================================================================================
 Schema:      Production
-Object:      uspDel_productmodelillustration
+Object:      uspDel_ProductModelIllustration
 
 Description: Delete a record(s) from the given table.
 
@@ -220,7 +220,7 @@ SET @ProductModelID = FILL IN;
 DECLARE @IllustrationID INT;
 SET @IllustrationID = FILL IN;
 
-EXEC Production.uspDel_productmodelillustration
+EXEC Production.uspDel_ProductModelIllustration
   @ProductModelID = @ProductModelID,
   @IllustrationID = @IllustrationID,
   @ReturnOutput   = 1,
@@ -240,9 +240,9 @@ GO
 
 EXECUTE sp_addextendedproperty
   @name = N'MS_Description',
-  @value = N'Delete a single record from the table. Not auditing is performed, however triggers are handled with a proper OUTPUT for information.',
+  @value = N'Delete a single record from the table. No auditing is performed, however triggers are handled with a proper OUTPUT for information.',
   @level0type = N'SCHEMA',
   @level0name = N'Production',
   @level1type = N'PROCEDURE',
-  @level1name = N'uspDel_productmodelillustration';
+  @level1name = N'uspDel_ProductModelIllustration';
 GO

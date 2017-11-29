@@ -1,10 +1,10 @@
 /*
-IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[HumanResources].[uspDel_jobcandidate]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [HumanResources].[uspDel_jobcandidate]
+IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[HumanResources].[uspDel_JobCandidate]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [HumanResources].[uspDel_JobCandidate]
 GO
 */
 
-CREATE PROCEDURE [HumanResources].[uspDel_jobcandidate]
+CREATE PROCEDURE [HumanResources].[uspDel_JobCandidate]
   @JobCandidateID INT,
   -- Return output options
   @ReturnOutput   BIT = 0,
@@ -20,7 +20,7 @@ AS
 WARNING: THIS IS A GENERATED CODE FILE! PLEASE DO NOT ALTER!
 ================================================================================
 Schema:      HumanResources
-Object:      uspDel_jobcandidate
+Object:      uspDel_JobCandidate
 
 Description: Delete a record(s) from the given table.
 
@@ -218,7 +218,7 @@ DECLARE @XmlResults XML;
 DECLARE @JobCandidateID INT;
 SET @JobCandidateID = FILL IN;
 
-EXEC HumanResources.uspDel_jobcandidate
+EXEC HumanResources.uspDel_JobCandidate
   @JobCandidateID = @JobCandidateID,
   @ReturnOutput   = 1,
   @ReturnAsTable  = 1,
@@ -237,9 +237,9 @@ GO
 
 EXECUTE sp_addextendedproperty
   @name = N'MS_Description',
-  @value = N'Delete a single record from the table. Not auditing is performed, however triggers are handled with a proper OUTPUT for information.',
+  @value = N'Delete a single record from the table. No auditing is performed, however triggers are handled with a proper OUTPUT for information.',
   @level0type = N'SCHEMA',
   @level0name = N'HumanResources',
   @level1type = N'PROCEDURE',
-  @level1name = N'uspDel_jobcandidate';
+  @level1name = N'uspDel_JobCandidate';
 GO

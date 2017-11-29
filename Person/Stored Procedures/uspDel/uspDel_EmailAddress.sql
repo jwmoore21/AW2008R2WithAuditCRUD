@@ -1,10 +1,10 @@
 /*
-IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Person].[uspDel_emailaddress]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [Person].[uspDel_emailaddress]
+IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Person].[uspDel_EmailAddress]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [Person].[uspDel_EmailAddress]
 GO
 */
 
-CREATE PROCEDURE [Person].[uspDel_emailaddress]
+CREATE PROCEDURE [Person].[uspDel_EmailAddress]
   @BusinessEntityID INT,
   @EmailAddressID INT,
   -- Return output options
@@ -21,7 +21,7 @@ AS
 WARNING: THIS IS A GENERATED CODE FILE! PLEASE DO NOT ALTER!
 ================================================================================
 Schema:      Person
-Object:      uspDel_emailaddress
+Object:      uspDel_EmailAddress
 
 Description: Delete a record(s) from the given table.
 
@@ -228,7 +228,7 @@ SET @BusinessEntityID = FILL IN;
 DECLARE @EmailAddressID INT;
 SET @EmailAddressID = FILL IN;
 
-EXEC Person.uspDel_emailaddress
+EXEC Person.uspDel_EmailAddress
   @BusinessEntityID = @BusinessEntityID,
   @EmailAddressID = @EmailAddressID,
   @ReturnOutput   = 1,
@@ -248,9 +248,9 @@ GO
 
 EXECUTE sp_addextendedproperty
   @name = N'MS_Description',
-  @value = N'Delete a single record from the table. Not auditing is performed, however triggers are handled with a proper OUTPUT for information.',
+  @value = N'Delete a single record from the table. No auditing is performed, however triggers are handled with a proper OUTPUT for information.',
   @level0type = N'SCHEMA',
   @level0name = N'Person',
   @level1type = N'PROCEDURE',
-  @level1name = N'uspDel_emailaddress';
+  @level1name = N'uspDel_EmailAddress';
 GO

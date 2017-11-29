@@ -1,10 +1,10 @@
 /*
-IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Person].[uspDel_personphone]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [Person].[uspDel_personphone]
+IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Person].[uspDel_PersonPhone]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [Person].[uspDel_PersonPhone]
 GO
 */
 
-CREATE PROCEDURE [Person].[uspDel_personphone]
+CREATE PROCEDURE [Person].[uspDel_PersonPhone]
   @BusinessEntityID INT,
   @PhoneNumber [dbo].[Phone],
   @PhoneNumberTypeID INT,
@@ -22,7 +22,7 @@ AS
 WARNING: THIS IS A GENERATED CODE FILE! PLEASE DO NOT ALTER!
 ================================================================================
 Schema:      Person
-Object:      uspDel_personphone
+Object:      uspDel_PersonPhone
 
 Description: Delete a record(s) from the given table.
 
@@ -71,10 +71,10 @@ BEGIN
     /* ------------------------------------------------------------------------- */
     /* Table Primary Key(s) */
     DECLARE @_BusinessEntityID  INT;
-    DECLARE @_PhoneNumber  PHONE;
-    DECLARE @_PhoneNumberTypeID  INT;
-    SET @_BusinessEntityID = @BusinessEntityID;
-    SET @_PhoneNumber = @PhoneNumber;
+    DECLARE @_PhoneNumber       [dbo].[Phone];
+    DECLARE @_PhoneNumberTypeID INT;
+    SET @_BusinessEntityID  = @BusinessEntityID;
+    SET @_PhoneNumber       = @PhoneNumber;
     SET @_PhoneNumberTypeID = @PhoneNumberTypeID;
 
     /* ------------------------------------------------------------------------- */
@@ -230,7 +230,7 @@ SET @PhoneNumber = FILL IN;
 DECLARE @PhoneNumberTypeID INT;
 SET @PhoneNumberTypeID = FILL IN;
 
-EXEC Person.uspDel_personphone
+EXEC Person.uspDel_PersonPhone
   @BusinessEntityID = @BusinessEntityID,
   @PhoneNumber = @PhoneNumber,
   @PhoneNumberTypeID = @PhoneNumberTypeID,
@@ -251,9 +251,9 @@ GO
 
 EXECUTE sp_addextendedproperty
   @name = N'MS_Description',
-  @value = N'Delete a single record from the table. Not auditing is performed, however triggers are handled with a proper OUTPUT for information.',
+  @value = N'Delete a single record from the table. No auditing is performed, however triggers are handled with a proper OUTPUT for information.',
   @level0type = N'SCHEMA',
   @level0name = N'Person',
   @level1type = N'PROCEDURE',
-  @level1name = N'uspDel_personphone';
+  @level1name = N'uspDel_PersonPhone';
 GO

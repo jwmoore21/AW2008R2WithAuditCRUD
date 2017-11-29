@@ -1,10 +1,10 @@
 /*
-IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Production].[uspDel_productdocument]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [Production].[uspDel_productdocument]
+IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Production].[uspDel_ProductDocument]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [Production].[uspDel_ProductDocument]
 GO
 */
 
-CREATE PROCEDURE [Production].[uspDel_productdocument]
+CREATE PROCEDURE [Production].[uspDel_ProductDocument]
   @ProductID INT,
   @DocumentNode HIERARCHYID,
   -- Return output options
@@ -21,7 +21,7 @@ AS
 WARNING: THIS IS A GENERATED CODE FILE! PLEASE DO NOT ALTER!
 ================================================================================
 Schema:      Production
-Object:      uspDel_productdocument
+Object:      uspDel_ProductDocument
 
 Description: Delete a record(s) from the given table.
 
@@ -220,7 +220,7 @@ SET @ProductID = FILL IN;
 DECLARE @DocumentNode HIERARCHYID;
 SET @DocumentNode = FILL IN;
 
-EXEC Production.uspDel_productdocument
+EXEC Production.uspDel_ProductDocument
   @ProductID = @ProductID,
   @DocumentNode = @DocumentNode,
   @ReturnOutput   = 1,
@@ -240,9 +240,9 @@ GO
 
 EXECUTE sp_addextendedproperty
   @name = N'MS_Description',
-  @value = N'Delete a single record from the table. Not auditing is performed, however triggers are handled with a proper OUTPUT for information.',
+  @value = N'Delete a single record from the table. No auditing is performed, however triggers are handled with a proper OUTPUT for information.',
   @level0type = N'SCHEMA',
   @level0name = N'Production',
   @level1type = N'PROCEDURE',
-  @level1name = N'uspDel_productdocument';
+  @level1name = N'uspDel_ProductDocument';
 GO

@@ -1,10 +1,10 @@
 /*
-IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Purchasing].[uspDel_purchaseorderheader]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [Purchasing].[uspDel_purchaseorderheader]
+IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Purchasing].[uspDel_PurchaseOrderHeader]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [Purchasing].[uspDel_PurchaseOrderHeader]
 GO
 */
 
-CREATE PROCEDURE [Purchasing].[uspDel_purchaseorderheader]
+CREATE PROCEDURE [Purchasing].[uspDel_PurchaseOrderHeader]
   @PurchaseOrderID INT,
   -- Return output options
   @ReturnOutput   BIT = 0,
@@ -20,7 +20,7 @@ AS
 WARNING: THIS IS A GENERATED CODE FILE! PLEASE DO NOT ALTER!
 ================================================================================
 Schema:      Purchasing
-Object:      uspDel_purchaseorderheader
+Object:      uspDel_PurchaseOrderHeader
 
 Description: Delete a record(s) from the given table.
 
@@ -253,7 +253,7 @@ DECLARE @XmlResults XML;
 DECLARE @PurchaseOrderID INT;
 SET @PurchaseOrderID = FILL IN;
 
-EXEC Purchasing.uspDel_purchaseorderheader
+EXEC Purchasing.uspDel_PurchaseOrderHeader
   @PurchaseOrderID = @PurchaseOrderID,
   @ReturnOutput   = 1,
   @ReturnAsTable  = 1,
@@ -272,9 +272,9 @@ GO
 
 EXECUTE sp_addextendedproperty
   @name = N'MS_Description',
-  @value = N'Delete a single record from the table. Not auditing is performed, however triggers are handled with a proper OUTPUT for information.',
+  @value = N'Delete a single record from the table. No auditing is performed, however triggers are handled with a proper OUTPUT for information.',
   @level0type = N'SCHEMA',
   @level0name = N'Purchasing',
   @level1type = N'PROCEDURE',
-  @level1name = N'uspDel_purchaseorderheader';
+  @level1name = N'uspDel_PurchaseOrderHeader';
 GO

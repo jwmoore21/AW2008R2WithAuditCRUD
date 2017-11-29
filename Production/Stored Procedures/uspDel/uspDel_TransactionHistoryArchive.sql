@@ -1,10 +1,10 @@
 /*
-IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Production].[uspDel_transactionhistoryarchive]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [Production].[uspDel_transactionhistoryarchive]
+IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Production].[uspDel_TransactionHistoryArchive]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [Production].[uspDel_TransactionHistoryArchive]
 GO
 */
 
-CREATE PROCEDURE [Production].[uspDel_transactionhistoryarchive]
+CREATE PROCEDURE [Production].[uspDel_TransactionHistoryArchive]
   @TransactionID INT,
   -- Return output options
   @ReturnOutput   BIT = 0,
@@ -20,7 +20,7 @@ AS
 WARNING: THIS IS A GENERATED CODE FILE! PLEASE DO NOT ALTER!
 ================================================================================
 Schema:      Production
-Object:      uspDel_transactionhistoryarchive
+Object:      uspDel_TransactionHistoryArchive
 
 Description: Delete a record(s) from the given table.
 
@@ -238,7 +238,7 @@ DECLARE @XmlResults XML;
 DECLARE @TransactionID INT;
 SET @TransactionID = FILL IN;
 
-EXEC Production.uspDel_transactionhistoryarchive
+EXEC Production.uspDel_TransactionHistoryArchive
   @TransactionID = @TransactionID,
   @ReturnOutput   = 1,
   @ReturnAsTable  = 1,
@@ -257,9 +257,9 @@ GO
 
 EXECUTE sp_addextendedproperty
   @name = N'MS_Description',
-  @value = N'Delete a single record from the table. Not auditing is performed, however triggers are handled with a proper OUTPUT for information.',
+  @value = N'Delete a single record from the table. No auditing is performed, however triggers are handled with a proper OUTPUT for information.',
   @level0type = N'SCHEMA',
   @level0name = N'Production',
   @level1type = N'PROCEDURE',
-  @level1name = N'uspDel_transactionhistoryarchive';
+  @level1name = N'uspDel_TransactionHistoryArchive';
 GO

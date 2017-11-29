@@ -1,10 +1,10 @@
 /*
-IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Production].[uspDel_workorderrouting]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [Production].[uspDel_workorderrouting]
+IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Production].[uspDel_WorkOrderRouting]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [Production].[uspDel_WorkOrderRouting]
 GO
 */
 
-CREATE PROCEDURE [Production].[uspDel_workorderrouting]
+CREATE PROCEDURE [Production].[uspDel_WorkOrderRouting]
   @WorkOrderID INT,
   @ProductID INT,
   @OperationSequence SMALLINT,
@@ -22,7 +22,7 @@ AS
 WARNING: THIS IS A GENERATED CODE FILE! PLEASE DO NOT ALTER!
 ================================================================================
 Schema:      Production
-Object:      uspDel_workorderrouting
+Object:      uspDel_WorkOrderRouting
 
 Description: Delete a record(s) from the given table.
 
@@ -262,7 +262,7 @@ SET @ProductID = FILL IN;
 DECLARE @OperationSequence SMALLINT;
 SET @OperationSequence = FILL IN;
 
-EXEC Production.uspDel_workorderrouting
+EXEC Production.uspDel_WorkOrderRouting
   @WorkOrderID = @WorkOrderID,
   @ProductID = @ProductID,
   @OperationSequence = @OperationSequence,
@@ -283,9 +283,9 @@ GO
 
 EXECUTE sp_addextendedproperty
   @name = N'MS_Description',
-  @value = N'Delete a single record from the table. Not auditing is performed, however triggers are handled with a proper OUTPUT for information.',
+  @value = N'Delete a single record from the table. No auditing is performed, however triggers are handled with a proper OUTPUT for information.',
   @level0type = N'SCHEMA',
   @level0name = N'Production',
   @level1type = N'PROCEDURE',
-  @level1name = N'uspDel_workorderrouting';
+  @level1name = N'uspDel_WorkOrderRouting';
 GO

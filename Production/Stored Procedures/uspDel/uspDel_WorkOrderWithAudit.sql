@@ -112,10 +112,10 @@ BEGIN
       /* Parent table has an update trigger enabled, and the audit table
          exists in the local audit schema, let the trigger handle
          the auditing */
-      DELETE FROM [Production].[workorder]
+      DELETE FROM [Production].[WorkOrder]
 
       WHERE
-        [workorder].[WorkOrderID] = @_WorkOrderID
+        [WorkOrder].[WorkOrderID] = @_WorkOrderID
       ;
 
     END; /* HasInsteadOfDeleteTrigger */
@@ -136,10 +136,10 @@ BEGIN
 
         /* No update trigger found on the parent table, however, we did find
            the audit table in our audit schema, save the audit data */
-        DELETE FROM [Production].[workorder]
+        DELETE FROM [Production].[WorkOrder]
 
         OUTPUT
-          CONVERT(VARCHAR(64),NEWID()),
+          CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER),
           @_AuditStatus,
           @_AuditAppUser,
           @_AuditSqlUser,
@@ -166,7 +166,7 @@ BEGIN
           [Audit].[AuditWorkOrder]
 
         WHERE
-          [workorder].[WorkOrderID] = @_WorkOrderID
+          [WorkOrder].[WorkOrderID] = @_WorkOrderID
         ;
 
       END; /* HasAuditTable */

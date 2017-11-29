@@ -115,11 +115,11 @@ BEGIN
       /* Parent table has an update trigger enabled, and the audit table
          exists in the local audit schema, let the trigger handle
          the auditing */
-      DELETE FROM [Sales].[specialofferproduct]
+      DELETE FROM [Sales].[SpecialOfferProduct]
 
       WHERE
-        [specialofferproduct].[SpecialOfferID] = @_SpecialOfferID
-        AND [specialofferproduct].[ProductID] = @_ProductID
+        [SpecialOfferProduct].[SpecialOfferID] = @_SpecialOfferID
+        AND [SpecialOfferProduct].[ProductID] = @_ProductID
       ;
 
     END; /* HasInsteadOfDeleteTrigger */
@@ -140,10 +140,10 @@ BEGIN
 
         /* No update trigger found on the parent table, however, we did find
            the audit table in our audit schema, save the audit data */
-        DELETE FROM [Sales].[specialofferproduct]
+        DELETE FROM [Sales].[SpecialOfferProduct]
 
         OUTPUT
-          CONVERT(VARCHAR(64),NEWID()),
+          CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER),
           @_AuditStatus,
           @_AuditAppUser,
           @_AuditSqlUser,
@@ -164,8 +164,8 @@ BEGIN
           [Audit].[AuditSpecialOfferProduct]
 
         WHERE
-          [specialofferproduct].[SpecialOfferID] = @_SpecialOfferID
-          AND [specialofferproduct].[ProductID] = @_ProductID
+          [SpecialOfferProduct].[SpecialOfferID] = @_SpecialOfferID
+          AND [SpecialOfferProduct].[ProductID] = @_ProductID
         ;
 
       END; /* HasAuditTable */

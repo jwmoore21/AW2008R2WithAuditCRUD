@@ -1,10 +1,10 @@
 /*
-IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[dbo].[uspDel_databaselog]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [dbo].[uspDel_databaselog]
+IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[dbo].[uspDel_DatabaseLog]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[uspDel_DatabaseLog]
 GO
 */
 
-CREATE PROCEDURE [dbo].[uspDel_databaselog]
+CREATE PROCEDURE [dbo].[uspDel_DatabaseLog]
   @DatabaseLogID INT,
   -- Return output options
   @ReturnOutput   BIT = 0,
@@ -20,7 +20,7 @@ AS
 WARNING: THIS IS A GENERATED CODE FILE! PLEASE DO NOT ALTER!
 ================================================================================
 Schema:      dbo
-Object:      uspDel_databaselog
+Object:      uspDel_DatabaseLog
 
 Description: Delete a record(s) from the given table.
 
@@ -213,7 +213,7 @@ DECLARE @XmlResults XML;
 DECLARE @DatabaseLogID INT;
 SET @DatabaseLogID = FILL IN;
 
-EXEC dbo.uspDel_databaselog
+EXEC dbo.uspDel_DatabaseLog
   @DatabaseLogID = @DatabaseLogID,
   @ReturnOutput   = 1,
   @ReturnAsTable  = 1,
@@ -232,9 +232,9 @@ GO
 
 EXECUTE sp_addextendedproperty
   @name = N'MS_Description',
-  @value = N'Delete a single record from the table. Not auditing is performed, however triggers are handled with a proper OUTPUT for information.',
+  @value = N'Delete a single record from the table. No auditing is performed, however triggers are handled with a proper OUTPUT for information.',
   @level0type = N'SCHEMA',
   @level0name = N'dbo',
   @level1type = N'PROCEDURE',
-  @level1name = N'uspDel_databaselog';
+  @level1name = N'uspDel_DatabaseLog';
 GO

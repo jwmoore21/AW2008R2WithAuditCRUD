@@ -1,10 +1,10 @@
 /*
-IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Sales].[uspDel_salespersonquotahistory]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [Sales].[uspDel_salespersonquotahistory]
+IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Sales].[uspDel_SalesPersonQuotaHistory]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [Sales].[uspDel_SalesPersonQuotaHistory]
 GO
 */
 
-CREATE PROCEDURE [Sales].[uspDel_salespersonquotahistory]
+CREATE PROCEDURE [Sales].[uspDel_SalesPersonQuotaHistory]
   @BusinessEntityID INT,
   @QuotaDate DATETIME,
   -- Return output options
@@ -21,7 +21,7 @@ AS
 WARNING: THIS IS A GENERATED CODE FILE! PLEASE DO NOT ALTER!
 ================================================================================
 Schema:      Sales
-Object:      uspDel_salespersonquotahistory
+Object:      uspDel_SalesPersonQuotaHistory
 
 Description: Delete a record(s) from the given table.
 
@@ -228,7 +228,7 @@ SET @BusinessEntityID = FILL IN;
 DECLARE @QuotaDate DATETIME;
 SET @QuotaDate = FILL IN;
 
-EXEC Sales.uspDel_salespersonquotahistory
+EXEC Sales.uspDel_SalesPersonQuotaHistory
   @BusinessEntityID = @BusinessEntityID,
   @QuotaDate = @QuotaDate,
   @ReturnOutput   = 1,
@@ -248,9 +248,9 @@ GO
 
 EXECUTE sp_addextendedproperty
   @name = N'MS_Description',
-  @value = N'Delete a single record from the table. Not auditing is performed, however triggers are handled with a proper OUTPUT for information.',
+  @value = N'Delete a single record from the table. No auditing is performed, however triggers are handled with a proper OUTPUT for information.',
   @level0type = N'SCHEMA',
   @level0name = N'Sales',
   @level1type = N'PROCEDURE',
-  @level1name = N'uspDel_salespersonquotahistory';
+  @level1name = N'uspDel_SalesPersonQuotaHistory';
 GO

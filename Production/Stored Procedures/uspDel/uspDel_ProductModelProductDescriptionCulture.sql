@@ -1,10 +1,10 @@
 /*
-IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Production].[uspDel_productmodelproductdescriptionculture]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [Production].[uspDel_productmodelproductdescriptionculture]
+IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Production].[uspDel_ProductModelProductDescriptionCulture]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [Production].[uspDel_ProductModelProductDescriptionCulture]
 GO
 */
 
-CREATE PROCEDURE [Production].[uspDel_productmodelproductdescriptionculture]
+CREATE PROCEDURE [Production].[uspDel_ProductModelProductDescriptionCulture]
   @ProductModelID INT,
   @ProductDescriptionID INT,
   @CultureID NCHAR(6),
@@ -22,7 +22,7 @@ AS
 WARNING: THIS IS A GENERATED CODE FILE! PLEASE DO NOT ALTER!
 ================================================================================
 Schema:      Production
-Object:      uspDel_productmodelproductdescriptionculture
+Object:      uspDel_ProductModelProductDescriptionCulture
 
 Description: Delete a record(s) from the given table.
 
@@ -230,7 +230,7 @@ SET @ProductDescriptionID = FILL IN;
 DECLARE @CultureID NCHAR;
 SET @CultureID = FILL IN;
 
-EXEC Production.uspDel_productmodelproductdescriptionculture
+EXEC Production.uspDel_ProductModelProductDescriptionCulture
   @ProductModelID = @ProductModelID,
   @ProductDescriptionID = @ProductDescriptionID,
   @CultureID = @CultureID,
@@ -251,9 +251,9 @@ GO
 
 EXECUTE sp_addextendedproperty
   @name = N'MS_Description',
-  @value = N'Delete a single record from the table. Not auditing is performed, however triggers are handled with a proper OUTPUT for information.',
+  @value = N'Delete a single record from the table. No auditing is performed, however triggers are handled with a proper OUTPUT for information.',
   @level0type = N'SCHEMA',
   @level0name = N'Production',
   @level1type = N'PROCEDURE',
-  @level1name = N'uspDel_productmodelproductdescriptionculture';
+  @level1name = N'uspDel_ProductModelProductDescriptionCulture';
 GO

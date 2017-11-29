@@ -5,10 +5,10 @@ GO
 */
 
 CREATE PROCEDURE [Person].[uspDel_PersonPhoneWithAudit]
-  @BusinessEntityID INT,
-  @PhoneNumber [dbo].[Phone],
+  @BusinessEntityID  INT,
+  @PhoneNumber       [dbo].[Phone],
   @PhoneNumberTypeID INT,
-  @ModifiedBy    UNIQUEIDENTIFIER = NULL,
+  @ModifiedBy        UNIQUEIDENTIFIER = NULL,
   -- Auditing Info
   @AuditBatchId   VARCHAR(64) = NULL,
   @AuditOperation VARCHAR(255) = NULL,
@@ -79,10 +79,10 @@ BEGIN
     /* ------------------------------------------------------------------------- */
     /* Table Primary Key(s) */
     DECLARE @_BusinessEntityID  INT;
-    DECLARE @_PhoneNumber  PHONE;
-    DECLARE @_PhoneNumberTypeID  INT;
-    SET @_BusinessEntityID = @BusinessEntityID;
-    SET @_PhoneNumber = @PhoneNumber;
+    DECLARE @_PhoneNumber       [dbo].[Phone];
+    DECLARE @_PhoneNumberTypeID INT;
+    SET @_BusinessEntityID  = @BusinessEntityID;
+    SET @_PhoneNumber       = @PhoneNumber;
     SET @_PhoneNumberTypeID = @PhoneNumberTypeID;
 
     /* ------------------------------------------------------------------------- */
@@ -118,12 +118,12 @@ BEGIN
       /* Parent table has an update trigger enabled, and the audit table
          exists in the local audit schema, let the trigger handle
          the auditing */
-      DELETE FROM [Person].[personphone]
+      DELETE FROM [Person].[PersonPhone]
 
       WHERE
-        [personphone].[BusinessEntityID] = @_BusinessEntityID
-        AND [personphone].[PhoneNumber] = @_PhoneNumber
-        AND [personphone].[PhoneNumberTypeID] = @_PhoneNumberTypeID
+        [PersonPhone].[BusinessEntityID] = @_BusinessEntityID
+        AND [PersonPhone].[PhoneNumber] = @_PhoneNumber
+        AND [PersonPhone].[PhoneNumberTypeID] = @_PhoneNumberTypeID
       ;
 
     END; /* HasInsteadOfDeleteTrigger */
@@ -144,10 +144,10 @@ BEGIN
 
         /* No update trigger found on the parent table, however, we did find
            the audit table in our audit schema, save the audit data */
-        DELETE FROM [Person].[personphone]
+        DELETE FROM [Person].[PersonPhone]
 
         OUTPUT
-          CONVERT(VARCHAR(64),NEWID()),
+          CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER),
           @_AuditStatus,
           @_AuditAppUser,
           @_AuditSqlUser,
@@ -168,9 +168,9 @@ BEGIN
           [Audit].[AuditPersonPhone]
 
         WHERE
-          [personphone].[BusinessEntityID] = @_BusinessEntityID
-          AND [personphone].[PhoneNumber] = @_PhoneNumber
-          AND [personphone].[PhoneNumberTypeID] = @_PhoneNumberTypeID
+          [PersonPhone].[BusinessEntityID] = @_BusinessEntityID
+          AND [PersonPhone].[PhoneNumber] = @_PhoneNumber
+          AND [PersonPhone].[PhoneNumberTypeID] = @_PhoneNumberTypeID
         ;
 
       END; /* HasAuditTable */

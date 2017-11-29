@@ -1,10 +1,10 @@
 /*
-IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Purchasing].[uspDel_vendor]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [Purchasing].[uspDel_vendor]
+IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Purchasing].[uspDel_Vendor]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [Purchasing].[uspDel_Vendor]
 GO
 */
 
-CREATE PROCEDURE [Purchasing].[uspDel_vendor]
+CREATE PROCEDURE [Purchasing].[uspDel_Vendor]
   @BusinessEntityID INT,
   -- Return output options
   @ReturnOutput   BIT = 0,
@@ -20,7 +20,7 @@ AS
 WARNING: THIS IS A GENERATED CODE FILE! PLEASE DO NOT ALTER!
 ================================================================================
 Schema:      Purchasing
-Object:      uspDel_vendor
+Object:      uspDel_Vendor
 
 Description: Delete a record(s) from the given table.
 
@@ -234,7 +234,7 @@ DECLARE @XmlResults XML;
 DECLARE @BusinessEntityID INT;
 SET @BusinessEntityID = FILL IN;
 
-EXEC Purchasing.uspDel_vendor
+EXEC Purchasing.uspDel_Vendor
   @BusinessEntityID = @BusinessEntityID,
   @ReturnOutput   = 1,
   @ReturnAsTable  = 1,
@@ -253,9 +253,9 @@ GO
 
 EXECUTE sp_addextendedproperty
   @name = N'MS_Description',
-  @value = N'Delete a single record from the table. Not auditing is performed, however triggers are handled with a proper OUTPUT for information.',
+  @value = N'Delete a single record from the table. No auditing is performed, however triggers are handled with a proper OUTPUT for information.',
   @level0type = N'SCHEMA',
   @level0name = N'Purchasing',
   @level1type = N'PROCEDURE',
-  @level1name = N'uspDel_vendor';
+  @level1name = N'uspDel_Vendor';
 GO

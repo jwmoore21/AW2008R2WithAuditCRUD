@@ -1,10 +1,10 @@
 /*
-IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Production].[uspDel_productinventory]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [Production].[uspDel_productinventory]
+IF EXISTS (SELECT 1 FROM [sys].[objects] WHERE object_id = OBJECT_ID(N'[Production].[uspDel_ProductInventory]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [Production].[uspDel_ProductInventory]
 GO
 */
 
-CREATE PROCEDURE [Production].[uspDel_productinventory]
+CREATE PROCEDURE [Production].[uspDel_ProductInventory]
   @ProductID INT,
   @LocationID SMALLINT,
   -- Return output options
@@ -21,7 +21,7 @@ AS
 WARNING: THIS IS A GENERATED CODE FILE! PLEASE DO NOT ALTER!
 ================================================================================
 Schema:      Production
-Object:      uspDel_productinventory
+Object:      uspDel_ProductInventory
 
 Description: Delete a record(s) from the given table.
 
@@ -236,7 +236,7 @@ SET @ProductID = FILL IN;
 DECLARE @LocationID SMALLINT;
 SET @LocationID = FILL IN;
 
-EXEC Production.uspDel_productinventory
+EXEC Production.uspDel_ProductInventory
   @ProductID = @ProductID,
   @LocationID = @LocationID,
   @ReturnOutput   = 1,
@@ -256,9 +256,9 @@ GO
 
 EXECUTE sp_addextendedproperty
   @name = N'MS_Description',
-  @value = N'Delete a single record from the table. Not auditing is performed, however triggers are handled with a proper OUTPUT for information.',
+  @value = N'Delete a single record from the table. No auditing is performed, however triggers are handled with a proper OUTPUT for information.',
   @level0type = N'SCHEMA',
   @level0name = N'Production',
   @level1type = N'PROCEDURE',
-  @level1name = N'uspDel_productinventory';
+  @level1name = N'uspDel_ProductInventory';
 GO
